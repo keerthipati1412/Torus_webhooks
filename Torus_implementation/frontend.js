@@ -1526,6 +1526,8 @@
 
     state.socket.send(JSON.stringify({
       type: eventName,
+      roomId: state.roomId,
+      room: state.roomId,
       ...payload
     }));
   }
