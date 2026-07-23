@@ -95,6 +95,15 @@
     const roomFromUrl = normalizeRoomId(params.get("room"));
     const roomFromStorage = normalizeRoomId(localStorage.getItem("roomId"));
     state.roomId = roomFromUrl || roomFromStorage || "";
+
+    const currentView = params.get('view') || '';
+    if (currentView === 'ultrasound-scanning') {
+      if (state.role === 'doctor') {
+        state.doctorClickedBegin = true;
+      } else {
+        state.doctorBeginReceived = true;
+      }
+    }
   }
 
   function cacheDom() {
@@ -341,6 +350,12 @@
         if (state.role === "patient" && data.type === "doctor-joined") {
           showDoctorJoinedPopup();
         }
+
+        const isScanningView = (new URLSearchParams(window.location.search).get('view') === 'ultrasound-scanning');
+        if (isScanningView) {
+          console.log("Auto-negotiating ready signal in scanning view due to user-joined event");
+          sendSignal("ready", { roomId: state.roomId });
+        }
         return;
       }
 
@@ -388,6 +403,12 @@
         setConnectionLabel(hasPeer ? "Connected" : "Waiting");
         setConnectionPillState(hasPeer);
         setCallState(CALL_STATE.WAITING, state.role === "patient" ? "Waiting for Doctor" : "Waiting for Patient");
+
+        const isScanningView = (new URLSearchParams(window.location.search).get('view') === 'ultrasound-scanning');
+        if (isScanningView && hasPeer) {
+          console.log("Auto-negotiating ready signal in scanning view due to connect-success event");
+          sendSignal("ready", { roomId: state.roomId });
+        }
 
         if (state.role === "patient") {
           if (hasPeer) {
