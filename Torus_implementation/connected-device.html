@@ -6387,13 +6387,34 @@
             signalingSocket = window.torusSocket || signalingSocket;
             localStream = window.torusLocalStream || localStream;
             remoteStream = window.torusRemoteStream || remoteStream;
-            if (localStream && patientVideoEl) {
-              patientVideoEl.srcObject = localStream;
-              patientVideoEl.play().catch(() => { });
-            }
-            if (remoteStream && consultationPatientVideoEl) {
-              consultationPatientVideoEl.srcObject = remoteStream;
-              consultationPatientVideoEl.play().catch(() => { });
+            const doctorTileVideoEl = document.getElementById('doctorTileVideo');
+            if (role === 'doctor') {
+              if (localStream && doctorTileVideoEl) {
+                doctorTileVideoEl.srcObject = localStream;
+                doctorTileVideoEl.play().catch(() => { });
+              }
+              if (remoteStream && patientVideoEl) {
+                patientVideoEl.srcObject = remoteStream;
+                patientVideoEl.play().catch(() => { });
+              }
+              if (remoteStream && consultationPatientVideoEl) {
+                consultationPatientVideoEl.srcObject = remoteStream;
+                consultationPatientVideoEl.play().catch(() => { });
+              }
+            } else {
+              // patient
+              if (localStream && patientVideoEl) {
+                patientVideoEl.srcObject = localStream;
+                patientVideoEl.play().catch(() => { });
+              }
+              if (localStream && consultationPatientVideoEl) {
+                consultationPatientVideoEl.srcObject = localStream;
+                consultationPatientVideoEl.play().catch(() => { });
+              }
+              if (remoteStream && doctorTileVideoEl) {
+                doctorTileVideoEl.srcObject = remoteStream;
+                doctorTileVideoEl.play().catch(() => { });
+              }
             }
             document.querySelectorAll('#patientPlaceholder').forEach(el => el.classList.add('hidden'));
             return;
