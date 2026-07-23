@@ -1,0 +1,18 @@
+# Dependency directories
+node_modules/
+Torus_implementation/node_modules/
+Torus_implementation/backend/node_modules/
+
+# Local databases and temporary files
+*.sqlite
+*.db
+slave_ip.txt
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
