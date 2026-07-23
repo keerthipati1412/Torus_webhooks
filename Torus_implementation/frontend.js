@@ -1299,35 +1299,81 @@
     bindControlButtons();
   }
 
+  window.torusToggleCamera = function(enabled) {
+    if (enabled === undefined) {
+      state.cameraEnabled = !state.cameraEnabled;
+    } else {
+      state.cameraEnabled = !!enabled;
+    }
+    
+    const activeStream = window.torusLocalStream || state.localStream;
+    if (activeStream) {
+      activeStream.getVideoTracks().forEach((track) => {
+        track.enabled = state.cameraEnabled;
+      });
+    }
+    
+    // Update landing view button
+    const camToggleBtn = document.getElementById("camToggleBtn");
+    if (camToggleBtn) {
+      camToggleBtn.classList.toggle("active", state.cameraEnabled);
+      camToggleBtn.classList.toggle("off", !state.cameraEnabled);
+    }
+    
+    // Update scanning view button
+    const consultationVideoBtn = document.getElementById("consultationVideoBtn");
+    if (consultationVideoBtn) {
+      consultationVideoBtn.classList.toggle("is-off", !state.cameraEnabled);
+    }
+    
+    console.log(`📹 Camera toggled: ${state.cameraEnabled ? "ON" : "OFF"}`);
+  };
+
+  window.torusToggleMic = function(enabled) {
+    if (enabled === undefined) {
+      state.micEnabled = !state.micEnabled;
+    } else {
+      state.micEnabled = !!enabled;
+    }
+    
+    const activeStream = window.torusLocalStream || state.localStream;
+    if (activeStream) {
+      activeStream.getAudioTracks().forEach((track) => {
+        track.enabled = state.micEnabled;
+      });
+    }
+    
+    // Update landing view button
+    const micToggleBtn = document.getElementById("micToggleBtn");
+    if (micToggleBtn) {
+      micToggleBtn.classList.toggle("active", state.micEnabled);
+      micToggleBtn.classList.toggle("off", !state.micEnabled);
+    }
+    
+    // Update scanning view button
+    const consultationMicBtn = document.getElementById("consultationMicBtn");
+    if (consultationMicBtn) {
+      consultationMicBtn.classList.toggle("is-off", !state.micEnabled);
+    }
+    
+    console.log(`🎤 Microphone toggled: ${state.micEnabled ? "ON" : "OFF"}`);
+  };
+
   function bindControlButtons() {
     const camToggleBtn = document.getElementById("camToggleBtn");
     const micToggleBtn = document.getElementById("micToggleBtn");
     const settingsBtn = document.getElementById("settingsBtn");
 
     if (camToggleBtn) {
-      camToggleBtn.addEventListener("click", () => {
-        state.cameraEnabled = !state.cameraEnabled;
-        if (state.localStream) {
-          state.localStream.getVideoTracks().forEach((track) => {
-            track.enabled = state.cameraEnabled;
-          });
-        }
-        camToggleBtn.classList.toggle("active", state.cameraEnabled);
-        camToggleBtn.classList.toggle("off", !state.cameraEnabled);
-      });
+      camToggleBtn.onclick = () => {
+        window.torusToggleCamera();
+      };
     }
 
     if (micToggleBtn) {
-      micToggleBtn.addEventListener("click", () => {
-        state.micEnabled = !state.micEnabled;
-        if (state.localStream) {
-          state.localStream.getAudioTracks().forEach((track) => {
-            track.enabled = state.micEnabled;
-          });
-        }
-        micToggleBtn.classList.toggle("active", state.micEnabled);
-        micToggleBtn.classList.toggle("off", !state.micEnabled);
-      });
+      micToggleBtn.onclick = () => {
+        window.torusToggleMic();
+      };
     }
 
     if (settingsBtn) {

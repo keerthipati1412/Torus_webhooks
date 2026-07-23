@@ -4817,24 +4817,41 @@
       }
 
       function toggleMicState() {
-        micMuted = !micMuted;
-        consultationMicBtn?.classList.toggle('is-off', micMuted);
-        if (stream) {
-          stream.getAudioTracks().forEach((track) => {
-            track.enabled = !micMuted;
-          });
+        if (typeof window.torusToggleMic === 'function') {
+          window.torusToggleMic();
+          micMuted = consultationMicBtn?.classList.contains('is-off');
+        } else {
+          micMuted = !micMuted;
+          consultationMicBtn?.classList.toggle('is-off', micMuted);
+          const activeStream = window.torusLocalStream || localStream || stream;
+          if (activeStream) {
+            activeStream.getAudioTracks().forEach((track) => {
+              track.enabled = !micMuted;
+            });
+          }
         }
       }
 
       function toggleVideoState() {
-        videoMuted = !videoMuted;
-        consultationVideoBtn?.classList.toggle('is-off', videoMuted);
-        if (stream) {
-          stream.getVideoTracks().forEach((track) => {
-            track.enabled = !videoMuted;
-          });
+        if (typeof window.torusToggleCamera === 'function') {
+          window.torusToggleCamera();
+          videoMuted = consultationVideoBtn?.classList.contains('is-off');
+        } else {
+          videoMuted = !videoMuted;
+          consultationVideoBtn?.classList.toggle('is-off', videoMuted);
+          const activeStream = window.torusLocalStream || localStream || stream;
+          if (activeStream) {
+            activeStream.getVideoTracks().forEach((track) => {
+              track.enabled = !videoMuted;
+            });
+          }
         }
         consultationPlaceholder?.classList.toggle('hidden', !videoMuted);
+        document.querySelectorAll('#patientPlaceholder').forEach(el => {
+          if (role === 'patient') {
+            el.classList.toggle('hidden', !videoMuted);
+          }
+        });
       }
 
       function sendChatMessage() {
