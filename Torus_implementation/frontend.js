@@ -351,11 +351,8 @@
           showDoctorJoinedPopup();
         }
 
-        const isScanningView = (new URLSearchParams(window.location.search).get('view') === 'ultrasound-scanning');
-        if (isScanningView) {
-          console.log("Auto-negotiating ready signal in scanning view due to user-joined event");
-          sendSignal("ready", { roomId: state.roomId });
-        }
+        console.log("Auto-negotiating ready signal due to user-joined event");
+        sendSignal("ready", { roomId: state.roomId });
         return;
       }
 
@@ -404,9 +401,8 @@
         setConnectionPillState(hasPeer);
         setCallState(CALL_STATE.WAITING, state.role === "patient" ? "Waiting for Doctor" : "Waiting for Patient");
 
-        const isScanningView = (new URLSearchParams(window.location.search).get('view') === 'ultrasound-scanning');
-        if (isScanningView && hasPeer) {
-          console.log("Auto-negotiating ready signal in scanning view due to connect-success event");
+        if (hasPeer) {
+          console.log("Auto-negotiating ready signal due to connect-success event");
           sendSignal("ready", { roomId: state.roomId });
         }
 
@@ -439,7 +435,7 @@
       }
 
       if (data.type === "ready") {
-        if (!state.hasCreatedOffer && state.role === "doctor" && state.doctorClickedBegin) {
+        if (!state.hasCreatedOffer && state.role === "doctor") {
           await createOffer();
         }
         return;
