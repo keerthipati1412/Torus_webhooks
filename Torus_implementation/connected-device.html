@@ -6239,10 +6239,7 @@
                 consultationPatientVideoEl.play().catch(err => console.error('Failed to play consultationPatientVideo:', err));
               }
               // Hide patient placeholder on doctor page
-              const patientPlaceholder = document.getElementById('patientPlaceholder');
-              if (patientPlaceholder) {
-                patientPlaceholder.classList.add('hidden');
-              }
+              document.querySelectorAll('#patientPlaceholder').forEach(el => el.classList.add('hidden'));
               const consultationPlaceholder = document.getElementById('consultationPlaceholder');
               if (consultationPlaceholder) {
                 consultationPlaceholder.classList.add('hidden');
@@ -6398,8 +6395,7 @@
               consultationPatientVideoEl.srcObject = remoteStream;
               consultationPatientVideoEl.play().catch(() => { });
             }
-            const patientPlaceholder = document.getElementById('patientPlaceholder');
-            if (patientPlaceholder) patientPlaceholder.classList.add('hidden');
+            document.querySelectorAll('#patientPlaceholder').forEach(el => el.classList.add('hidden'));
             return;
           }
           // Get local stream
@@ -6497,10 +6493,7 @@
               consultationPatientVideoEl.play().catch(() => { });
             }
             // Hide placeholder on patient page
-            const patientPlaceholder = document.getElementById('patientPlaceholder');
-            if (patientPlaceholder) {
-              patientPlaceholder.classList.add('hidden');
-            }
+            document.querySelectorAll('#patientPlaceholder').forEach(el => el.classList.add('hidden'));
             console.log('✅ Patient local camera started (assigned to patientVideo)');
           }
 

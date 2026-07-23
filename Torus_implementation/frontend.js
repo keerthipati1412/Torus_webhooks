@@ -76,6 +76,17 @@
     label.textContent = text;
   }
 
+  function togglePatientPlaceholder(hide) {
+    const placeholders = document.querySelectorAll("#patientPlaceholder");
+    placeholders.forEach((el) => {
+      if (hide) {
+        el.classList.add("hidden");
+      } else {
+        el.classList.remove("hidden");
+      }
+    });
+  }
+
   function readConfig() {
     const params = new URLSearchParams(window.location.search);
     const roleParam = String(params.get("role") || "").toLowerCase();
@@ -880,14 +891,10 @@
           mainVideo.muted = false;
           void tryPlayVideo(mainVideo);
         }
-        if (dom.patientPlaceholder) {
-          dom.patientPlaceholder.classList.add("hidden");
-        }
+        togglePatientPlaceholder(true);
       } else {
         mainVideo.srcObject = null;
-        if (dom.patientPlaceholder) {
-          dom.patientPlaceholder.classList.remove("hidden");
-        }
+        togglePatientPlaceholder(false);
       }
     }
 
@@ -995,9 +1002,7 @@
       dom.doctorPlaceholder.classList.remove("hidden");
     }
 
-    if (dom.patientPlaceholder) {
-      dom.patientPlaceholder.classList.remove("hidden");
-    }
+    togglePatientPlaceholder(false);
 
     const remoteVideo = document.getElementById("remoteVideo");
     if (remoteVideo) {
@@ -1104,11 +1109,11 @@
   }
 
   function showWaitingState(waitingMessage = "Waiting...") {
-    const currentView = new URLSearchParams(window.location.search).get('view') || 'connected-device';
-    if (currentView !== 'connected-device') return;
-
     setConnectionLabel("Waiting");
     setConnectionPillState(false);
+
+    const currentView = new URLSearchParams(window.location.search).get('view') || 'connected-device';
+    if (currentView !== 'connected-device') return;
 
     if (dom.testingBtn) {
       dom.testingBtn.disabled = true;
@@ -1136,11 +1141,15 @@
   }
 
   function showConnectedState() {
-    const currentView = new URLSearchParams(window.location.search).get('view') || 'connected-device';
-    if (currentView !== 'connected-device') return;
-
     state.callState = CALL_STATE.CONNECTED;
     state.isPatientConnected = true;
+
+    setConnectionLabel("Connected");
+    setConnectionPillState(true);
+    setTestingButtonState(true);
+
+    const currentView = new URLSearchParams(window.location.search).get('view') || 'connected-device';
+    if (currentView !== 'connected-device') return;
 
     // Connected state requirements: reveal details, controls and patient tile.
     setElementDisplay(dom.doctorPanel, "flex");
@@ -1151,18 +1160,13 @@
     setElementDisplay(dom.endBtn, "block");
 
     showFullUI();
-    setConnectionLabel("Connected");
-    setConnectionPillState(true);
-    setTestingButtonState(true);
     setSessionDetailsVisibility(true);
 
     if (dom.callStatePanel) {
       dom.callStatePanel.innerHTML = "";
     }
 
-    if (dom.patientPlaceholder) {
-      dom.patientPlaceholder.classList.add("hidden");
-    }
+    togglePatientPlaceholder(true);
 
     renderRoleVideoLayout();
     renderControlsState();
@@ -1474,6 +1478,31 @@
         remoteVideo.srcObject = remoteStream;
         remoteVideo.muted = false;
         void tryPlayVideo(remoteVideo);
+      }
+
+      // Sync streams to the scanning view video elements
+      const patientVideo = document.getElementById("patientVideo");
+      if (patientVideo && state.role === "doctor") {
+        patientVideo.srcObject = remoteStream;
+        patientVideo.muted = false;
+        void tryPlayVideo(patientVideo);
+        togglePatientPlaceholder(true);
+      }
+
+      const consultationPatientVideo = document.getElementById("consultationPatientVideo");
+      if (consultationPatientVideo && state.role === "doctor") {
+        consultationPatientVideo.srcObject = remoteStream;
+        consultationPatientVideo.muted = false;
+        void tryPlayVideo(consultationPatientVideo);
+        const placeholder = document.getElementById("consultationPlaceholder");
+        if (placeholder) placeholder.classList.add("hidden");
+      }
+
+      const doctorTileVideo = document.getElementById("doctorTileVideo");
+      if (doctorTileVideo && state.role === "patient") {
+        doctorTileVideo.srcObject = remoteStream;
+        doctorTileVideo.muted = false;
+        void tryPlayVideo(doctorTileVideo);
       }
 
       renderRoleVideoLayout();
