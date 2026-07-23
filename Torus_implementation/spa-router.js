@@ -1,6 +1,10 @@
 (function () {
   console.log("SPA Router Initializing...");
 
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+
   function navigateSPA(view, updateHistory = true) {
     console.log("SPA Navigating to view:", view);
     document.body.setAttribute('data-view', view);
@@ -67,6 +71,10 @@
         window.loadReportContext();
       }
     }
+
+    // Scroll to top of both the window and any page container on view transitions
+    window.scrollTo(0, 0);
+    document.querySelectorAll('.main').forEach(el => el.scrollTop = 0);
   }
 
   window.navigateSPA = navigateSPA;
