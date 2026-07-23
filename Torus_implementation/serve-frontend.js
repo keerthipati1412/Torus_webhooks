@@ -15,20 +15,20 @@ const socketIoProxy = createProxyMiddleware({
 });
 
 const hapticWsProxy = createProxyMiddleware({
-  target: 'http://localhost:5000',
+  target: 'http://localhost:5003',
   ws: true, // Upgrade for WebSockets
   changeOrigin: true,
   logLevel: 'debug'
 });
 
 const authApiProxy = createProxyMiddleware({
-  target: 'http://localhost:5000',
+  target: 'http://localhost:5003',
   changeOrigin: true,
   logLevel: 'debug'
 });
 
 const hapticApiProxy = createProxyMiddleware({
-  target: 'http://localhost:5000',
+  target: 'http://localhost:5003',
   changeOrigin: true,
   logLevel: 'debug'
 });

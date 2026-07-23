@@ -18,12 +18,12 @@ const frontend = spawn('node', ['serve-frontend.js'], {
   stdio: 'inherit'
 });
 
-console.log("🔑 Starting Torus OTP/Database Backend Server (Port 5000)...");
+console.log("🔑 Starting Torus OTP/Database Backend Server (Port 5003)...");
 const backend = spawn('npm', ['start'], {
   cwd: path.join(__dirname, 'backend'),
   stdio: 'inherit',
   shell: true,
-  env: { ...process.env, PORT: '5000' }
+  env: { ...process.env, PORT: '5003' }
 });
 
 const cleanup = () => {

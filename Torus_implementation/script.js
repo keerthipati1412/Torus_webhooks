@@ -111,8 +111,8 @@ const HAPTIC_STATUS = {
 const HAPTIC_BACKEND_CONFIG = {
   enableWebSocket: false,
   enableApiPolling: true,
-  webSocketUrl: (window.location.port === '3000' || window.location.port === '') ? (window.location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + window.location.host : (window.location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + window.location.hostname + ':5000',
-  apiEndpoint: (window.location.port === '3000' || window.location.port === '') ? '/haptic-status' : window.location.protocol + '//' + window.location.hostname + ':5000/haptic-status',
+  webSocketUrl: (window.location.port === '3000' || window.location.port === '') ? (window.location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + window.location.host : (window.location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + window.location.hostname + ':5003',
+  apiEndpoint: (window.location.port === '3000' || window.location.port === '') ? '/haptic-status' : window.location.protocol + '//' + window.location.hostname + ':5003/haptic-status',
   apiPollIntervalMs: 5000
 };
 

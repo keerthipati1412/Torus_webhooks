@@ -14,7 +14,7 @@ const WebSocket = require('ws');
 const { spawn } = require('child_process');
 
 const app = express();
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 5003;
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey123';
 const NODE_ENV = (process.env.NODE_ENV || 'development').toLowerCase();
 const IS_PRODUCTION = NODE_ENV === 'production';
