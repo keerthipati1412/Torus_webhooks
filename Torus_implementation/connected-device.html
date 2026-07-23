@@ -11,20 +11,6 @@
   <link rel="stylesheet" href="styles.css" />
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    :root {
-      --bg-main: #ffffff;
-      --bg-card: #151a2b;
-      --bg-card-2: #14192a;
-      --line: rgba(76, 87, 130, 0.34);
-      --text-main: #ffffff;
-      --text-muted: #7f8aa8;
-      --teal: #00ff85;
-      --cyan: #00d7ff;
-      --purple: #6f2cff;
-      --purple-soft: #7f37ff;
-      --red: #ff5353;
-    }
-
     * {
       box-sizing: border-box;
     }
@@ -50,8 +36,6 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background:
-        #ffffff;
     }
 
     .sidebar-overlay {
@@ -1505,6 +1489,21 @@
       margin-bottom: 0.875em;
       color: #9CA3AF;
     }
+  </style>
+  <style id="light-theme-lock">
+    :root {
+      --bg-main: #ffffff;
+      --bg-card: #151a2b;
+      --bg-card-2: #14192a;
+      --line: rgba(76, 87, 130, 0.34);
+      --text-main: #ffffff;
+      --text-muted: #7f8aa8;
+      --teal: #00ff85;
+      --cyan: #00d7ff;
+      --purple: #6f2cff;
+      --purple-soft: #7f37ff;
+      --red: #ff5353;
+    }
 
     /* Final light-theme lock (colors only) */
     html,
@@ -2546,65 +2545,6 @@
           </div>
         </div>
 
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-        <aside class="sidebar" id="sidebar" aria-label="Dashboard navigation">
-          <div class="sidebar-header">
-            <div class="sidebar-brand">
-              <div class="brand-logo-wrap">
-                <img src="logo.png" alt="TORUS Logo" class="brand-logo" />
-              </div>
-              <div class="brand-copy">
-                <strong>TORUS</strong>
-                <span>Doctor Portal</span>
-              </div>
-            </div>
-            <button class="close-sidebar" id="closeSidebar" type="button" aria-label="Close sidebar">
-              <i data-lucide="x"></i>
-            </button>
-          </div>
-
-          <nav class="sidebar-nav">
-            <button class="sidebar-link active" type="button" data-nav-target="dashboard">
-              <i data-lucide="layout-dashboard" class="link-icon"></i>
-              <span>Dashboard</span>
-            </button>
-            <button class="sidebar-link" type="button" data-nav-target="doctor-profile">
-              <i data-lucide="users" class="link-icon"></i>
-              <span>Doctor Profile</span>
-            </button>
-            <button class="sidebar-link" type="button" data-nav-target="activity-log">
-              <i data-lucide="activity" class="link-icon"></i>
-              <span>Activity Log</span>
-            </button>
-            <button class="sidebar-link" type="button" data-nav-target="insights">
-              <i data-lucide="bar-chart-3" class="link-icon"></i>
-              <span>Insights</span>
-            </button>
-            <button class="sidebar-link" type="button" data-nav-target="patient-reports">
-              <i data-lucide="file-text" class="link-icon"></i>
-              <span>Patient Reports</span>
-            </button>
-            <button class="sidebar-link" type="button" data-nav-target="history">
-              <i data-lucide="history" class="link-icon"></i>
-              <span>History</span>
-            </button>
-            <button class="sidebar-link logout" type="button" data-action="logout">
-              <i data-lucide="log-out" class="link-icon"></i>
-              <span>Logout</span>
-            </button>
-          </nav>
-          <div class="sidebar-spacer"></div>
-
-          <div class="sidebar-footer">
-            <div class="user-summary">
-              <strong data-user-name>Dr. User</strong>
-              <span data-user-email>user@example.com</span>
-              <span>Role: <span data-user-role>doctor</span></span>
-            </div>
-          </div>
-        </aside>
-
         <div class="consultation-bottom-bar" aria-label="Consultation controls">
           <button class="consultation-action-btn mic" id="consultationMicBtn" type="button"
             aria-label="Toggle microphone">
@@ -3020,63 +2960,6 @@
       </section>
     </main>
   </div>
-
-  <div id="sidebarOverlay" class="sidebar-overlay"></div>
-  <aside id="sidebar" class="sidebar" aria-label="Dashboard navigation">
-    <div class="sidebar-header">
-      <div class="sidebar-brand">
-        <div class="brand-logo-wrap">
-          <img src="logo.png" alt="TORUS Logo" class="brand-logo" />
-        </div>
-        <div class="brand-copy">
-          <strong>TORUS</strong>
-          <span>Doctor Portal</span>
-        </div>
-      </div>
-      <button class="close-sidebar" id="closeSidebar" type="button" aria-label="Close sidebar">
-        <i data-lucide="x"></i>
-      </button>
-    </div>
-    <nav class="sidebar-nav">
-      <button class="sidebar-link active" type="button" data-nav-target="dashboard">
-        <i data-lucide="layout-dashboard" class="link-icon"></i>
-        <span>Dashboard</span>
-      </button>
-      <button class="sidebar-link" type="button" data-nav-target="doctor-profile">
-        <i data-lucide="users" class="link-icon"></i>
-        <span>Doctor Profile</span>
-      </button>
-      <button class="sidebar-link" type="button" data-nav-target="activity-log">
-        <i data-lucide="activity" class="link-icon"></i>
-        <span>Activity Log</span>
-      </button>
-      <button class="sidebar-link" type="button" data-nav-target="insights">
-        <i data-lucide="bar-chart-3" class="link-icon"></i>
-        <span>Insights</span>
-      </button>
-      <button class="sidebar-link" type="button" data-nav-target="patient-reports">
-        <i data-lucide="file-text" class="link-icon"></i>
-        <span>Patient Reports</span>
-      </button>
-      <button class="sidebar-link" type="button" data-nav-target="history">
-        <i data-lucide="history" class="link-icon"></i>
-        <span>History</span>
-      </button>
-      <button class="sidebar-link logout" type="button" data-action="logout">
-        <i data-lucide="log-out" class="link-icon"></i>
-        <span>Logout</span>
-      </button>
-    </nav>
-    <div class="sidebar-spacer"></div>
-
-    <div class="sidebar-footer">
-      <div class="user-summary">
-        <strong data-user-name>Dr. User</strong>
-        <span data-user-email>user@example.com</span>
-        <span>Role: <span data-user-role>doctor</span></span>
-      </div>
-    </div>
-  </aside>
 
   <div id="printOnlyContainer" class="print-only" aria-hidden="true"></div>
 

@@ -3,6 +3,12 @@
 
   function navigateSPA(view, updateHistory = true) {
     console.log("SPA Navigating to view:", view);
+    document.body.setAttribute('data-view', view);
+
+    const lightThemeStyles = document.getElementById('light-theme-lock');
+    if (lightThemeStyles) {
+      lightThemeStyles.disabled = (view !== 'connected-device');
+    }
 
     // Update browser URL query parameter 'view' without page reload
     if (updateHistory) {
@@ -73,12 +79,25 @@
 
   // Handle initial page load
   const initialView = new URLSearchParams(window.location.search).get('view') || 'connected-device';
-  if (initialView !== 'connected-device') {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => {
+  
+  const initLayoutState = () => {
+    document.body.setAttribute('data-view', initialView);
+    const lightThemeStyles = document.getElementById('light-theme-lock');
+    if (lightThemeStyles) {
+      lightThemeStyles.disabled = (initialView !== 'connected-device');
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initLayoutState();
+      if (initialView !== 'connected-device') {
         navigateSPA(initialView, false);
-      });
-    } else {
+      }
+    });
+  } else {
+    initLayoutState();
+    if (initialView !== 'connected-device') {
       navigateSPA(initialView, false);
     }
   }

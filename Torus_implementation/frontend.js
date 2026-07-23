@@ -341,6 +341,7 @@
       }
 
       if (data.type === "doctor-joined" || data.type === "user-joined") {
+        resetPeerConnection();
         state.hasPeer = true;
         setConnectionLabel("Connected");
         setConnectionPillState(true);
@@ -425,6 +426,7 @@
       }
 
       if (data.type === "user-left") {
+        resetPeerConnection();
         state.hasPeer = false;
         state.isPatientConnected = false;
         setConnectionLabel("Waiting");
@@ -1520,6 +1522,23 @@
       await ensureLocalStream();
     } catch (error) {
       console.warn("Initial camera preview failed, continuing with signaling only:", error?.message || error);
+    }
+  }
+
+  function resetPeerConnection() {
+    console.log("🔄 Resetting peer connection and negotiation state");
+    state.hasCreatedOffer = false;
+    if (state.peerConnection) {
+      try {
+        state.peerConnection.ontrack = null;
+        state.peerConnection.onicecandidate = null;
+        state.peerConnection.oniceconnectionstatechange = null;
+        state.peerConnection.onsignalingstatechange = null;
+        state.peerConnection.close();
+      } catch (e) {
+        console.warn("Error closing peer connection:", e);
+      }
+      state.peerConnection = null;
     }
   }
 
