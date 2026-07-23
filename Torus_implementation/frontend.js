@@ -888,8 +888,13 @@
     try {
       await videoElement.play();
     } catch (error) {
-      // Autoplay can be blocked if audio is unmuted; render still remains attached.
-      console.warn("Video autoplay blocked:", error?.message || error);
+      console.warn("Video autoplay blocked, trying muted play:", error?.message || error);
+      videoElement.muted = true;
+      try {
+        await videoElement.play();
+      } catch (muteError) {
+        console.error("Muted play also failed:", muteError?.message || muteError);
+      }
     }
   }
 
@@ -2194,6 +2199,30 @@
     }
 
     ensureDoctorRoomGenerated();
+
+    const unmuteAll = () => {
+      console.log("🔊 User interaction detected: Unmuting remote feeds");
+      const remoteVideo = document.getElementById("remoteVideo");
+      if (remoteVideo && remoteVideo.srcObject) {
+        remoteVideo.muted = false;
+      }
+      const patientVideo = document.getElementById("patientVideo");
+      if (patientVideo && patientVideo.srcObject && state.role === "doctor") {
+        patientVideo.muted = false;
+      }
+      const consultationPatientVideo = document.getElementById("consultationPatientVideo");
+      if (consultationPatientVideo && consultationPatientVideo.srcObject && state.role === "doctor") {
+        consultationPatientVideo.muted = false;
+      }
+      const doctorTileVideo = document.getElementById("doctorTileVideo");
+      if (doctorTileVideo && doctorTileVideo.srcObject && state.role === "patient") {
+        doctorTileVideo.muted = false;
+      }
+      document.removeEventListener("click", unmuteAll);
+      document.removeEventListener("touchstart", unmuteAll);
+    };
+    document.addEventListener("click", unmuteAll);
+    document.addEventListener("touchstart", unmuteAll);
 
     try {
       // Start the local camera on page load for the active role.

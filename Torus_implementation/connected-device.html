@@ -6231,12 +6231,20 @@
               if (patientVideoEl) {
                 patientVideoEl.srcObject = remoteStream;
                 patientVideoEl.muted = false;
-                patientVideoEl.play().catch(err => console.error('Failed to play patientVideo:', err));
+                patientVideoEl.play().catch(err => {
+                  console.warn('patientVideo play blocked, trying muted:', err);
+                  patientVideoEl.muted = true;
+                  patientVideoEl.play().catch(e => console.error('Muted patientVideo play failed:', e));
+                });
               }
               if (consultationPatientVideoEl) {
                 consultationPatientVideoEl.srcObject = remoteStream;
                 consultationPatientVideoEl.muted = false;
-                consultationPatientVideoEl.play().catch(err => console.error('Failed to play consultationPatientVideo:', err));
+                consultationPatientVideoEl.play().catch(err => {
+                  console.warn('consultationPatientVideo play blocked, trying muted:', err);
+                  consultationPatientVideoEl.muted = true;
+                  consultationPatientVideoEl.play().catch(e => console.error('Muted consultationPatientVideo play failed:', e));
+                });
               }
               // Hide patient placeholder on doctor page
               document.querySelectorAll('#patientPlaceholder').forEach(el => el.classList.add('hidden'));
@@ -6248,7 +6256,11 @@
               if (doctorTileVideoEl) {
                 doctorTileVideoEl.srcObject = remoteStream;
                 doctorTileVideoEl.muted = false;
-                doctorTileVideoEl.play().catch(err => console.error('Failed to play doctorTileVideo:', err));
+                doctorTileVideoEl.play().catch(err => {
+                  console.warn('doctorTileVideo play blocked, trying muted:', err);
+                  doctorTileVideoEl.muted = true;
+                  doctorTileVideoEl.play().catch(e => console.error('Muted doctorTileVideo play failed:', e));
+                });
               }
             }
           }
