@@ -1,0 +1,10 @@
+{
+  "name": "torus-workspace",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm install --prefix Torus_implementation && npm install --prefix Torus_implementation/backend",
+    "start": "npm --prefix Torus_implementation start",
+    "start:backend": "npm --prefix Torus_implementation/backend start",
+    "dev:backend": "npm --prefix Torus_implementation/backend run dev"
+  }
+}

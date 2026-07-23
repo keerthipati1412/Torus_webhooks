@@ -1,0 +1,2866 @@
+:root {
+  --bg-main: #0b0f18;
+  --bg-panel: #171b29;
+  --bg-panel-2: #131726;
+  --line: rgba(42, 173, 209, 0.24);
+  --line-soft: rgba(127, 55, 255, 0.24);
+  --text-main: #f7f8ff;
+  --text-muted: #9ca3b9;
+  --cyan: #18d8ff;
+  --cyan-2: #00bfe7;
+  --purple: #7c3aed;
+  --purple-2: #8b5cf6;
+  --green: #16f29c;
+  --red: #ff4545;
+  --shadow: 0 1.25em 3em rgba(0, 0, 0, 0.25);
+}
+
+:root {
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    width: 100%;
+    min-height: 100%;
+    background: radial-gradient(circle at top left, rgba(124, 58, 237, 0.08), transparent 32%),
+      radial-gradient(circle at top right, rgba(24, 216, 255, 0.07), transparent 28%),
+      var(--bg-main);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  body {
+    min-height: 100vh;
+    font-size: 67%;
+  }
+
+  button {
+    font: inherit;
+  }
+
+  .app-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    height: 4.625em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.25em;
+    border-bottom: 0.0625em solid rgba(97, 59, 196, 0.22);
+    background: linear-gradient(180deg, rgba(10, 14, 32, 0.96) 0%, rgba(6, 10, 24, 0.96) 100%);
+    flex-shrink: 0;
+  }
+
+  .topbar-left,
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+  }
+
+  .menu-icon-btn {
+    width: 4em;
+    height: 4em;
+    border-radius: 0.75em;
+    border: 0.0625em solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: #00e5ff;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: all 0.22s ease;
+  }
+
+  .menu-icon-btn i {
+    width: 1.75em;
+    height: 1.75em;
+  }
+
+  .menu-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+
+  .brand-inline {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+  }
+
+  .brand-inline .brand-logo-wrap {
+    width: 3.875em;
+    height: 3.875em;
+    border-radius: 0.75em;
+    margin: 0;
+    border: 0.0625em solid rgba(106, 0, 255, 0.14);
+    background: transparent;
+    box-shadow: none;
+    display: grid;
+    place-items: center;
+  }
+
+  .brand-inline .brand-logo {
+    width: 2em;
+    height: 2em;
+    object-fit: contain;
+    filter: contrast(1.2) saturate(1.1);
+  }
+
+  .brand-wordmark {
+    font-size: 2.5em;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    color: var(--text-main);
+  }
+
+  .icon-btn,
+  .profile-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 3em;
+    border-radius: 0.75em;
+    border: 0.0625em solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: #dbe7ff;
+    cursor: pointer;
+    transition: all 0.22s ease;
+  }
+
+  .icon-btn {
+    width: 3em;
+    padding: 0;
+    color: #cbd5e1;
+  }
+
+  .icon-btn i {
+    width: 1.3125em;
+    height: 1.3125em;
+  }
+
+  .icon-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .profile-pill {
+    width: 3.125em;
+    height: 3.125em;
+    border-radius: 50%;
+    padding: 0;
+    border-color: rgba(106, 0, 255, 0.55);
+    color: #d8b4fe;
+    background: rgba(106, 0, 255, 0.12);
+    font-weight: 700;
+    text-transform: uppercase;
+    box-shadow: 0 0 1em rgba(106, 0, 255, 0.2);
+  }
+
+  .main {
+    flex: 1;
+    padding: 1.375em 1.5em 1.125em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+  }
+
+  .heading-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.25em;
+    flex-wrap: wrap;
+  }
+
+  .title-wrap h1 {
+    margin: 0;
+    font-size: 3em;
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .title-wrap p {
+    margin: 0.25em 0 0;
+    font-size: 1.02em;
+    line-height: 1.35;
+    color: #a38cff;
+    font-weight: 500;
+  }
+
+  .status-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    flex-wrap: wrap;
+    margin-top: 0.25em;
+  }
+
+  .back-btn {
+    height: 2.25em;
+    padding: 0 1em;
+    border-radius: 999px;
+    border: 0.0625em solid rgba(124, 58, 237, 0.55);
+    background: rgba(13, 18, 33, 0.88);
+    color: #d8deef;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    cursor: pointer;
+    box-shadow: 0 0 0.75em rgba(124, 58, 237, 0.08);
+  }
+
+  .back-btn svg {
+    width: 1em;
+    height: 1em;
+  }
+
+  .session-details-slot {
+    width: 100%;
+  }
+
+  .patient-details-card {
+    width: 100%;
+    border-radius: 1em;
+    border: 0.0625em solid rgba(24, 216, 255, 0.22);
+    background: linear-gradient(180deg, rgba(22, 24, 36, 0.95), rgba(18, 21, 31, 0.95));
+    box-shadow: var(--shadow);
+    padding: 1.8em 1.8em 1.6em;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    column-gap: 2.2em;
+    row-gap: 1.2em;
+    align-items: start;
+  }
+
+  .patient-header {
+    grid-column: 1 / 4;
+    display: flex;
+    align-items: center;
+    gap: 0.65em;
+  }
+
+  .patient-header-icon {
+    width: 2.8em;
+    height: 2.8em;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: rgba(124, 58, 237, 0.1);
+  }
+
+  .patient-header-icon svg {
+    width: 1.45em;
+    height: 1.45em;
+    color: var(--purple);
+    stroke: var(--purple);
+  }
+
+  .patient-details-title {
+    margin: 0;
+    font-size: 1.85em;
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .history-btn {
+    grid-column: 6 / 7;
+    justify-self: end;
+    align-self: start;
+    height: 2.5em;
+    padding: 0 1.2em;
+    border-radius: 999px;
+    border: 0.0625em solid rgba(0, 215, 255, 0.45);
+    background: linear-gradient(135deg, rgba(0, 215, 255, 0.16), rgba(0, 215, 255, 0.08));
+    color: #10d8ff;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    cursor: pointer;
+    box-shadow: 0 0 1.1em rgba(0, 215, 255, 0.1);
+  }
+
+  .history-btn svg {
+    width: 1.05em;
+    height: 1.05em;
+  }
+
+  .patient-details-item {
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    min-width: 0;
+  }
+
+  .patient-item-top {
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+    min-width: 0;
+  }
+
+  .patient-icon-wrap {
+    width: 1.45em;
+    height: 1.45em;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+  }
+
+  .patient-icon-wrap svg {
+    width: 1.45em;
+    height: 1.45em;
+    color: var(--purple);
+    stroke: var(--purple);
+  }
+
+  .label {
+    font-size: 1.1em;
+    font-weight: 500;
+    color: rgba(233, 236, 255, 0.78);
+  }
+
+  .value {
+    font-size: 1.3em;
+    line-height: 1.25;
+    font-weight: 700;
+    color: #f4f6ff;
+    word-break: break-word;
+  }
+
+  .feeds-row {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.2fr 1.2fr;
+    gap: 1em;
+    min-height: 48em;
+    margin-bottom: 1.5em;
+  }
+
+  .feed-card {
+    position: relative;
+    min-height: 48em;
+    border-radius: 1em;
+    border: 0.0625em solid rgba(24, 216, 255, 0.2);
+    background: linear-gradient(180deg, rgba(21, 24, 35, 0.97), rgba(18, 21, 31, 0.97));
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .feed-card.left {
+    border-color: rgba(124, 58, 237, 0.3);
+  }
+
+  .feed-card.right {
+    border-color: rgba(0, 215, 255, 0.22);
+  }
+
+  .feed-card.capture-flash::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 9;
+    background:
+      radial-gradient(circle at center, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.68) 24%, rgba(24, 216, 255, 0.42) 48%, rgba(24, 216, 255, 0) 78%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.08));
+    opacity: 0;
+    mix-blend-mode: screen;
+    animation: captureFlash 220ms ease-out;
+  }
+
+  @keyframes captureFlash {
+    0% {
+      opacity: 0;
+    }
+
+    18% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .panel-controls {
+    position: absolute;
+    top: 1em;
+    left: 1em;
+    z-index: 5;
+    display: flex;
+    gap: 0.9em;
+  }
+
+  .panel-controls .control-btn {
+    width: 4.5em;
+    height: 4.5em;
+    border-radius: 999px;
+    border: 0.08em solid rgba(24, 216, 255, 0.3);
+    background: linear-gradient(180deg, rgba(20, 25, 40, 0.98), rgba(10, 14, 26, 0.98));
+    color: #20e5ff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow:
+      0 0.6em 1.4em rgba(0, 191, 231, 0.16),
+      0 0 0 0.05em rgba(255, 255, 255, 0.03) inset,
+      0 0 1em rgba(24, 216, 255, 0.12);
+    backdrop-filter: blur(0.4em);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .panel-controls .control-btn:nth-child(2) {
+    color: #8b5cf6;
+    border-color: rgba(124, 58, 237, 0.34);
+    box-shadow:
+      0 0.6em 1.4em rgba(124, 58, 237, 0.18),
+      0 0 0 0.05em rgba(255, 255, 255, 0.03) inset,
+      0 0 1em rgba(124, 58, 237, 0.12);
+  }
+
+  .panel-controls .control-btn:nth-child(3) {
+    color: #9c6cff;
+    border-color: rgba(156, 108, 255, 0.32);
+    box-shadow:
+      0 0.6em 1.4em rgba(156, 108, 255, 0.18),
+      0 0 0 0.05em rgba(255, 255, 255, 0.03) inset,
+      0 0 1em rgba(156, 108, 255, 0.12);
+  }
+
+  .panel-controls .control-btn svg {
+    width: 2.1em;
+    height: 2.1em;
+    stroke-width: 2.4;
+  }
+
+  .ultrasound-fullscreen-btn {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    z-index: 5;
+    width: 4.5em;
+    height: 4.5em;
+    border-radius: 999px;
+    border: 0.08em solid rgba(156, 108, 255, 0.32);
+    background: linear-gradient(180deg, rgba(20, 25, 40, 0.98), rgba(10, 14, 26, 0.98));
+    color: #9c6cff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow:
+      0 0.6em 1.4em rgba(156, 108, 255, 0.18),
+      0 0 0 0.05em rgba(255, 255, 255, 0.03) inset,
+      0 0 1em rgba(156, 108, 255, 0.12);
+    backdrop-filter: blur(0.4em);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .ultrasound-fullscreen-btn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(156, 108, 255, 0.52);
+    box-shadow:
+      0 0.7em 1.5em rgba(156, 108, 255, 0.22),
+      0 0 1em rgba(156, 108, 255, 0.16);
+  }
+
+  .ultrasound-fullscreen-btn i {
+    font-size: 1.8em;
+    line-height: 1;
+  }
+
+  .recording-indicator {
+    position: absolute;
+    top: 0.9em;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: none;
+    align-items: center;
+    padding: 0.42em 0.85em;
+    border-radius: 0.45em;
+    border: 0.06em solid rgba(255, 69, 69, 0.28);
+    background: rgba(61, 21, 35, 0.55);
+    color: #cf3956;
+    font-size: 1em;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .recording-indicator.active {
+    display: inline-flex;
+  }
+
+  .ultrasound-recording-dot {
+    position: absolute;
+    left: 0.95em;
+    bottom: 0.95em;
+    width: 0.7em;
+    height: 0.7em;
+    border-radius: 50%;
+    background: #ff0000;
+    box-shadow: 0 0 0.7em rgba(255, 0, 0, 0.72);
+    z-index: 7;
+    pointer-events: none;
+    display: none;
+  }
+
+  .ultrasound-recording-dot.active {
+    display: block;
+    animation: ultrasoundRecordingPulse 1s steps(2, end) infinite;
+  }
+
+  @keyframes ultrasoundRecordingPulse {
+
+    0%,
+    49% {
+      opacity: 1;
+    }
+
+    50%,
+    100% {
+      opacity: 0.15;
+    }
+  }
+
+  .feed-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7em;
+    color: rgba(180, 191, 225, 0.7);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .feed-center svg {
+    width: 3.4em;
+    height: 3.4em;
+    color: var(--purple);
+    stroke: var(--purple);
+  }
+
+  .feed-center .label-text {
+    font-size: 1.28em;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 0.5em rgba(24, 216, 255, 0.28);
+  }
+
+  #ultrasoundPlaceholder {
+    pointer-events: auto;
+  }
+
+  .ultrasound-select-btn {
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 5;
+    border: 0.08em solid rgba(24, 216, 255, 0.32);
+    border-radius: 999px;
+    padding: 0.8rem 1rem;
+    background: linear-gradient(135deg, rgba(20, 25, 40, 0.98), rgba(12, 16, 28, 0.98));
+    color: #20e5ff;
+    font-weight: 800;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow:
+      0 0.7em 1.5em rgba(0, 191, 231, 0.16),
+      0 0 0 0.05em rgba(255, 255, 255, 0.04) inset,
+      0 0 1em rgba(124, 58, 237, 0.12);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, filter 0.2s ease;
+  }
+
+  .ultrasound-select-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+    border-color: rgba(156, 108, 255, 0.5);
+  }
+
+  .feed-label.bottom-text {
+    position: absolute;
+    left: 0.95em;
+    bottom: 0.9em;
+    z-index: 4;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 0.55em rgba(24, 216, 255, 0.34);
+  }
+
+  .video-stream {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: transparent;
+    z-index: 2;
+  }
+
+  .video-stream::-webkit-media-controls,
+  .video-stream::-webkit-media-controls-enclosure,
+  .video-stream::-webkit-media-controls-panel,
+  .video-stream::-webkit-media-controls-play-button,
+  .video-stream::-webkit-media-controls-start-playback-button,
+  .video-stream::-webkit-media-controls-current-time-display,
+  .video-stream::-webkit-media-controls-time-remaining-display,
+  .video-stream::-webkit-media-controls-timeline,
+  .video-stream::-webkit-media-controls-seek-back-button,
+  .video-stream::-webkit-media-controls-seek-forward-button,
+  .video-stream::-webkit-media-controls-volume-slider,
+  .video-stream::-webkit-media-controls-mute-button,
+  .video-stream::-webkit-media-controls-fullscreen-button,
+  .video-stream::-webkit-media-controls-picture-in-picture-button,
+  .video-stream::-internal-media-controls-download-button {
+    display: none !important;
+    -webkit-appearance: none;
+  }
+
+  .ultrasound-video-stream {
+    object-fit: cover;
+    object-position: center center;
+    background: #05070c;
+  }
+
+  .ultrasound-video-stream.hidden {
+    display: none;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  html.ultrasound-viewer-mode .topbar,
+  html.ultrasound-viewer-mode .heading-row,
+  html.ultrasound-viewer-mode .patient-details-card,
+  html.ultrasound-viewer-mode .actions-row,
+  html.ultrasound-viewer-mode #patientCameraPanel,
+  html.ultrasound-viewer-mode .sidebar,
+  html.ultrasound-viewer-mode .sidebar-overlay {
+    display: none !important;
+  }
+
+  html.ultrasound-viewer-mode .main {
+    padding: 0.5em;
+    gap: 0.5em;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  html.ultrasound-viewer-mode body {
+    overflow: hidden;
+  }
+
+  html.ultrasound-viewer-mode .feeds-row {
+    grid-template-columns: 1fr;
+    min-height: calc(100vh - 1em);
+    margin-bottom: 0;
+  }
+
+  html.ultrasound-viewer-mode .feed-card.left {
+    min-height: calc(100vh - 1em);
+  }
+
+  .feed-label.bottom-text {
+    z-index: 3;
+  }
+
+  .doctor-tile {
+    position: absolute;
+    right: 0.85em;
+    bottom: 0.85em;
+    width: clamp(24em, 28vw, 30em);
+    height: clamp(16em, 18vw, 20em);
+    border-radius: 1em;
+    border: 0.125em solid rgba(156, 108, 255, 0.8);
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+    color: #f5f7ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25em;
+    box-shadow: 0 0.5em 1.3em rgba(124, 58, 237, 0.34);
+    z-index: 6;
+    overflow: hidden;
+  }
+
+  .doctor-tile-video,
+  .consultation-doctor-tile-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .doctor-tile> :not(.doctor-tile-video),
+  .consultation-doctor-tile> :not(.consultation-doctor-tile-video) {
+    position: relative;
+    z-index: 2;
+  }
+
+  .doctor-tile svg {
+    width: 1.15em;
+    height: 1.15em;
+  }
+
+  .doctor-tile .name {
+    font-size: 0.72em;
+    line-height: 1;
+    font-weight: 700;
+  }
+
+  .call-status-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8em;
+    width: 100%;
+    min-height: 4.25em;
+    border-radius: 0.95em;
+    border: 0.0625em solid rgba(24, 216, 255, 0.12);
+    background: rgba(17, 20, 29, 0.96);
+    color: #c99cff;
+    font-size: 1.05em;
+    font-weight: 600;
+    box-shadow: var(--shadow);
+  }
+
+  .spinner {
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    border: 0.2em solid rgba(201, 156, 255, 0.2);
+    border-top-color: #c99cff;
+    animation: spin 0.9s linear infinite;
+  }
+
+  .actions-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    /* left chinna, right pedda */
+    gap: 0.75em;
+    align-items: stretch;
+  }
+
+  .btn-primary,
+  .btn-danger {
+    border: 0;
+    border-radius: 0.85em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.25em;
+    min-height: 4.2em;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  }
+
+  .btn-primary i,
+  .btn-danger i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.6em;
+    flex: 0 0 auto;
+  }
+
+  .btn-primary i svg,
+  .btn-danger i svg {
+    width: 1.05em;
+    height: 1.05em;
+    stroke-width: 2.5;
+  }
+
+  .end-scan-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .end-scan-btn i,
+  .end-scan-btn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  .end-scan-btn i {
+    margin-right: 0;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #16d9ff, #00bfe7);
+    color: #06131d;
+    box-shadow: 0 0.65em 1.5em rgba(0, 191, 231, 0.28);
+  }
+
+  .btn-danger {
+    width: 100%;
+    background: linear-gradient(135deg, #ff4b4b, #ff3434);
+    color: #fff;
+    box-shadow: 0 0.65em 1.5em rgba(255, 69, 69, 0.22);
+  }
+
+  .btn-primary:active,
+  .btn-danger:active,
+  .back-btn:active,
+  .history-btn:active,
+  .panel-controls .control-btn:active {
+    transform: translateY(1px) scale(0.99);
+  }
+
+  .panel-controls .control-btn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow:
+      0 0.7em 1.5em rgba(0, 191, 231, 0.2),
+      0 0 0 0.05em rgba(255, 255, 255, 0.03) inset,
+      0 0 1em rgba(24, 216, 255, 0.14);
+  }
+
+  body.consultation-fullscreen {
+    overflow: hidden;
+  }
+
+  body.consultation-fullscreen .app-shell .main {
+    display: none;
+  }
+
+  .consultation-overlay {
+    position: fixed;
+    top: 4.625em;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 160;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    padding: 1em;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: none;
+    transition: opacity 300ms ease-in-out, visibility 0s linear 300ms;
+    background: transparent;
+  }
+
+  .consultation-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .consultation-overlay.active,
+  .consultation-overlay.floating-active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .consultation-overlay.closing {
+    opacity: 0;
+    visibility: visible;
+    pointer-events: none;
+  }
+
+  .consultation-overlay.closing .consultation-stage {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+
+  .consultation-overlay.consultation-fullscreen {
+    background:
+      radial-gradient(circle at top left, rgba(124, 58, 237, 0.09), transparent 28%),
+      radial-gradient(circle at top right, rgba(24, 216, 255, 0.08), transparent 26%),
+      linear-gradient(180deg, rgba(7, 10, 18, 0.98) 0%, rgba(10, 13, 22, 0.99) 100%);
+    pointer-events: auto;
+  }
+
+  .consultation-stage {
+    position: fixed;
+    left: 0;
+    top: 4.625em;
+    width: 100vw;
+    height: calc(100vh - 4.625em);
+    border-radius: 1.25em;
+    border: 0.0625em solid rgba(24, 216, 255, 0.12);
+    background: linear-gradient(180deg, rgba(19, 22, 34, 0.97) 0%, rgba(14, 17, 27, 0.99) 100%);
+    box-shadow: 0 2em 5em rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .consultation-close-btn {
+    position: static;
+    width: 4.5em;
+    height: 4.5em;
+    border-radius: 50%;
+    border: 0.0625em solid rgba(24, 216, 255, 0.22);
+    background: rgba(12, 16, 29, 0.96);
+    color: #1fe4ff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow:
+      0 0.6em 1.35em rgba(0, 191, 231, 0.14),
+      0 0 0.8em rgba(24, 216, 255, 0.08);
+  }
+
+  .consultation-stage {
+    transition:
+      left 300ms ease,
+      top 300ms ease,
+      width 300ms ease,
+      height 300ms ease,
+      transform 300ms ease,
+      border-radius 300ms ease,
+      box-shadow 300ms ease,
+      opacity 300ms ease;
+  }
+
+  .consultation-overlay.consultation-floating {
+    background: transparent;
+    pointer-events: auto;
+  }
+
+  body:not(.patient-view) .consultation-overlay.consultation-floating {
+    display: none !important;
+  }
+
+  body:not(.patient-view) #ultrasoundPanel.ultrasound-fullscreen .consultation-overlay.consultation-floating,
+  body:not(.patient-view) #ultrasoundPanel:fullscreen .consultation-overlay.consultation-floating,
+  html.ultrasound-viewer-mode body:not(.patient-view) .consultation-overlay.consultation-floating {
+    display: flex !important;
+  }
+
+  .floating-consultation-active .sidebar,
+  .floating-consultation-active .menu-overlay,
+  .floating-consultation-active .sidebar-overlay {
+    pointer-events: none;
+  }
+
+  .consultation-overlay.consultation-floating .consultation-stage,
+  .floating-consultation-window {
+    position: fixed;
+    left: auto;
+    top: auto;
+    right: 1.2em;
+    bottom: auto;
+    width: clamp(440px, 45vw, 470px);
+    height: clamp(325px, 35vh, 395px);
+    max-width: calc(100vw - 1.5rem);
+    max-height: calc(100vh - 1.5rem);
+    border-radius: 1.2em;
+    border: 0.08em solid rgba(24, 216, 255, 0.72);
+    box-shadow:
+      0 0.9em 2.2em rgba(0, 0, 0, 0.42),
+      0 0 0 0.08em rgba(24, 216, 255, 0.34),
+      0 0 1.1em rgba(24, 216, 255, 0.32),
+      0 0 2.4em rgba(24, 216, 255, 0.22),
+      0 0 4.4em rgba(0, 215, 255, 0.14);
+    background:
+      linear-gradient(180deg, rgba(20, 24, 37, 0.96) 0%, rgba(14, 17, 27, 0.99) 100%),
+      radial-gradient(circle at 20% 0%, rgba(24, 216, 255, 0.14), transparent 34%),
+      radial-gradient(circle at 100% 0%, rgba(124, 58, 237, 0.08), transparent 30%);
+    z-index: 99999;
+    pointer-events: auto;
+    transform: none;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .consultation-overlay.consultation-floating .consultation-stage.consultation-minimized,
+  .floating-consultation-window.consultation-minimized {
+    height: 4.45em !important;
+    min-height: 4.45em !important;
+    overflow: hidden !important;
+  }
+
+  .consultation-overlay.consultation-floating .consultation-stage.consultation-minimized .consultation-feed,
+  .consultation-overlay.consultation-floating .consultation-stage.consultation-minimized .consultation-bottom-bar,
+  .floating-consultation-window.consultation-minimized .consultation-feed,
+  .floating-consultation-window.consultation-minimized .consultation-bottom-bar {
+    display: none !important;
+  }
+
+  .floating-consultation-window::before,
+  .consultation-overlay.consultation-floating .consultation-stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 0.08em;
+    background: linear-gradient(135deg, rgba(24, 216, 255, 0.95), rgba(24, 216, 255, 0.18), rgba(124, 58, 237, 0.16));
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    box-shadow:
+      inset 0 0 1.1em rgba(24, 216, 255, 0.12),
+      0 0 1.2em rgba(24, 216, 255, 0.14);
+    opacity: 0.95;
+  }
+
+  .consultation-overlay.consultation-floating .consultation-header,
+  .floating-consultation-window .consultation-header {
+    cursor: move;
+    pointer-events: auto;
+  }
+
+  .consultation-overlay.consultation-floating .consultation-stage.floating-dragging,
+  .consultation-stage.floating-dragging {
+    transition: none;
+  }
+
+  .consultation-overlay.consultation-floating .consultation-stage.floating-dragging .consultation-header,
+  .consultation-stage.floating-dragging .consultation-header {
+    cursor: grabbing;
+  }
+
+  .floating-close-btn {
+    position: relative;
+    z-index: 999999 !important;
+    pointer-events: auto !important;
+    cursor: pointer;
+  }
+
+  .floating-close-btn,
+  .popup-close-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    background: rgba(25, 5, 10, 0.88) !important;
+    border: 1px solid rgba(255, 60, 60, 0.45);
+    color: #ff4d4d !important;
+    box-shadow:
+      0 0 14px rgba(255, 60, 60, 0.22),
+      inset 0 0 10px rgba(255, 60, 60, 0.06);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  .floating-close-btn:hover,
+  .popup-close-btn:hover {
+    background: rgba(255, 60, 60, 0.14) !important;
+    box-shadow: 0 0 20px rgba(255, 60, 60, 0.5);
+    transform: scale(1.05);
+  }
+
+  .floating-consultation-window .consultation-panel-actions,
+  .consultation-overlay.consultation-floating .consultation-stage .consultation-panel-actions {
+    position: relative;
+    flex: 0 0 auto;
+    height: 4.45em;
+    padding: 0 1.5em 0 1.2em;
+    z-index: 6;
+  }
+
+  .floating-consultation-window .consultation-feed,
+  .consultation-overlay.consultation-floating .consultation-stage .consultation-feed {
+    position: relative;
+    inset: auto;
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding-top: 0 !important;
+    padding-right: 0.8em;
+    padding-bottom: 0.7em;
+    padding-left: 0.8em;
+    margin-top: 0 !important;
+    margin-bottom: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .floating-consultation-window .consultation-video-stream,
+  .consultation-overlay.consultation-floating .consultation-stage .consultation-video-stream {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+  }
+
+  .floating-consultation-window .consultation-feed-center,
+  .consultation-overlay.consultation-floating .consultation-stage .consultation-feed-center {
+    inset: 0 1em 0.9em;
+  }
+
+  .floating-consultation-window .consultation-doctor-tile,
+  .consultation-overlay.consultation-floating .consultation-stage .consultation-doctor-tile {
+    width: clamp(9rem, 21%, 11rem);
+    /* WIDTH increase */
+
+    height: clamp(5.8rem, 16%, 7rem);
+    /* HEIGHT decrease */
+
+    right: 1em;
+    bottom: 5.2em;
+
+    border-radius: 1em;
+
+    border: 0.1em solid rgba(24, 216, 255, 0.22);
+
+    background: linear-gradient(135deg,
+        rgba(124, 58, 237, 0.96),
+        rgba(139, 92, 246, 0.96));
+
+    box-shadow:
+      0 0 1.2em rgba(24, 216, 255, 0.25),
+      0 0 2.2em rgba(24, 216, 255, 0.12),
+      0 0.6em 1.5em rgba(124, 58, 237, 0.24);
+
+    overflow: hidden;
+  }
+
+  .floating-consultation-window .consultation-doctor-tile video,
+  .consultation-overlay.consultation-floating .consultation-stage .consultation-doctor-tile video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+  }
+
+  .floating-consultation-window .consultation-feed-label,
+  .consultation-overlay.consultation-floating .consultation-stage .consultation-feed-label {
+    left: 1em;
+    bottom: 0.65em;
+    z-index: 6;
+  }
+
+  .floating-consultation-window .consultation-bottom-bar,
+  .consultation-overlay.consultation-floating .consultation-stage .consultation-bottom-bar {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    z-index: 7;
+    width: calc(100% - 1.85em);
+    margin: 0.05em auto 0.85em;
+    padding: 0.7em 1em;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.65em;
+    box-sizing: border-box;
+  }
+
+  .floating-consultation-window .consultation-action-btn,
+  .consultation-overlay.consultation-floating .consultation-stage .consultation-action-btn {
+    width: 2.95em;
+    height: 2.95em;
+  }
+
+  .floating-consultation-window .consultation-action-btn svg,
+  .consultation-overlay.consultation-floating .consultation-stage .consultation-action-btn svg {
+    width: 1.25em;
+    height: 1.25em;
+  }
+
+  .consultation-stage.consultation-restoring {
+    pointer-events: none;
+  }
+
+  .consultation-overlay.consultation-fullscreen .consultation-stage {
+    left: 0;
+    top: 4.625em;
+    width: 100vw;
+    height: calc(100vh - 4.625em);
+    border-radius: 1.25em;
+    pointer-events: auto;
+  }
+
+  .consultation-overlay.floating-active .consultation-stage {
+    pointer-events: auto;
+  }
+
+  .consultation-panel-actions {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65em;
+    height: 4.5em;
+    padding: 0 1em 0 1.1em;
+    border-bottom: 0.0625em solid rgba(24, 216, 255, 0.14);
+    background: linear-gradient(180deg, rgba(12, 16, 29, 0.97) 0%, rgba(12, 16, 29, 0.82) 100%);
+    backdrop-filter: blur(0.5em);
+  }
+
+  .consultation-header-title {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    min-width: 0;
+    color: #f7f8ff;
+    font-size: 1.08em;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+  }
+
+  .consultation-hd-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.1em;
+    height: 1.45em;
+    padding: 0 0.55em;
+    border-radius: 999px;
+    border: 0.0625em solid rgba(24, 216, 255, 0.3);
+    background: rgba(24, 216, 255, 0.12);
+    color: #86f4ff;
+    font-size: 0.72em;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .consultation-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.55em;
+    margin-left: auto;
+  }
+
+  .consultation-header-actions .consultation-close-btn,
+  .consultation-header-actions .consultation-dismiss-btn {
+    width: 2.85em;
+    height: 2.85em;
+    min-width: 2.85em;
+    min-height: 2.85em;
+    padding: 0;
+    border-radius: 0.8em;
+    border: 0.0625em solid rgba(24, 216, 255, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 0.5em 1.1em rgba(0, 191, 231, 0.12);
+  }
+
+  .consultation-header-actions .consultation-close-btn {
+    background: rgba(12, 16, 29, 0.96);
+    color: #1fe4ff;
+  }
+
+  .consultation-header-actions .consultation-dismiss-btn {
+    background: rgba(44, 16, 23, 0.96);
+    border-color: rgba(255, 69, 69, 0.3);
+    color: #ff4f4f;
+    line-height: 1;
+  }
+
+  .consultation-header-actions .consultation-close-btn svg,
+  .consultation-header-actions .consultation-dismiss-btn svg {
+    width: 1.3em;
+    height: 1.3em;
+    stroke-width: 2.5;
+  }
+
+  .consultation-menu-btn {
+    width: 3em;
+    height: 3em;
+    border-radius: 0.85em;
+  }
+
+  .consultation-menu-btn i {
+    width: 1.35em;
+    height: 1.35em;
+  }
+
+  .consultation-close-btn svg {
+    width: 2.35em;
+    height: 2.35em;
+    stroke-width: 2.4;
+  }
+
+  /* Fullscreen top-right close button style (teal/cyan rounded square with white inward arrows) */
+  .consultation-close-btn.fullscreen-style {
+    background: linear-gradient(135deg, rgba(0, 215, 255, 0.95), rgba(0, 185, 220, 0.95));
+    border-color: rgba(0, 215, 255, 0.9);
+    color: #ffffff;
+    box-shadow: 0 0.6em 1.35em rgba(0, 215, 255, 0.18);
+  }
+
+  .consultation-close-btn.fullscreen-style svg {
+    stroke: #ffffff;
+  }
+
+  .consultation-overlay.consultation-fullscreen .floating-close-btn {
+    display: none !important;
+  }
+
+  .consultation-overlay.consultation-floating .floating-close-btn {
+    display: flex;
+  }
+
+  .consultation-header-actions .consultation-restore-btn {
+    width: 2.85em;
+    height: 2.85em;
+    min-width: 2.85em;
+    min-height: 2.85em;
+    padding: 0;
+    border-radius: 0.8em;
+    border: 0.0625em solid rgba(24, 216, 255, 0.22);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 0.5em 1.1em rgba(0, 191, 231, 0.12);
+    background: rgba(12, 16, 29, 0.96);
+    color: #1fe4ff;
+    transition: all 0.2s ease;
+  }
+
+  .consultation-header-actions .consultation-restore-btn:hover {
+    background: rgba(24, 216, 255, 0.14);
+    border-color: rgba(24, 216, 255, 0.4);
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+  }
+
+  .consultation-header-actions .consultation-restore-btn svg {
+    width: 1.3em;
+    height: 1.3em;
+    stroke-width: 2.5;
+  }
+
+  .consultation-overlay.consultation-fullscreen #consultationRestoreFullscreenBtn {
+    display: flex !important;
+  }
+
+  .fullscreen-expand-btn,
+  .consultation-expand-btn,
+  .top-right-expand-btn {
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    width: 52px;
+    height: 52px;
+
+    border-radius: 14px;
+
+    background: rgba(5, 10, 25, 0.92) !important;
+
+    border: 1px solid rgba(0, 229, 255, 0.45);
+
+    color: #00e5ff !important;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow:
+      0 0 18px rgba(0, 229, 255, 0.32),
+      inset 0 0 10px rgba(0, 229, 255, 0.08);
+
+    backdrop-filter: blur(12px);
+
+    transition: all 0.22s ease;
+
+    cursor: pointer;
+  }
+
+  .fullscreen-expand-btn:hover,
+  .consultation-expand-btn:hover,
+  .top-right-expand-btn:hover {
+
+    background: rgba(0, 229, 255, 0.12) !important;
+
+    box-shadow:
+      0 0 24px rgba(0, 229, 255, 0.6);
+
+    transform: scale(1.08);
+  }
+
+  .fullscreen-expand-btn i,
+  .consultation-expand-btn i,
+  .top-right-expand-btn i {
+
+    font-size: 20px;
+  }
+
+  .consultation-feed {
+    position: absolute;
+    inset: 0;
+    padding: 5.05em 1.15em 6.75em;
+    background: linear-gradient(180deg, rgba(20, 23, 35, 0.96) 0%, rgba(14, 17, 27, 0.99) 100%);
+  }
+
+  .consultation-video-stream {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: transparent;
+    z-index: 2;
+  }
+
+  .consultation-feed-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7em;
+    color: rgba(180, 191, 225, 0.72);
+    text-align: center;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .consultation-feed-center svg {
+    width: 3.6em;
+    height: 3.6em;
+    color: var(--purple);
+    stroke: var(--purple);
+  }
+
+  .consultation-feed-center .label-text {
+    font-size: 1.16em;
+    font-weight: 700;
+    color: #b0b6c8;
+  }
+
+  .consultation-feed-label {
+    position: absolute;
+    left: 0.95em;
+    bottom: 0.9em;
+    z-index: 4;
+    color: #dfe4ff;
+    font-size: 0.86em;
+    font-weight: 600;
+  }
+
+  /* ── Doctor-only: Ultrasound PiP floating window inside expanded Patient Video ── */
+  #usPipWindow {
+    position: absolute;
+    top: 30vh;
+    left: 42vw;
+    width: 16vw;
+    min-width: 11em;
+    max-width: 20vw;
+    font-size: 0.68em;
+    border-radius: 0.85em;
+    border: 1.5px solid rgba(124, 58, 237, 0.55);
+    background: rgba(10, 12, 22, 0.96);
+    box-shadow: 0 0.6em 2em rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(124, 58, 237, 0.18);
+    z-index: 20;
+    overflow: hidden;
+    display: none;
+    /* hidden until overlay opens for doctor */
+    flex-direction: column;
+    user-select: none;
+  }
+
+  body:not(.patient-view) .consultation-overlay.active #usPipWindow {
+    display: flex;
+  }
+
+  body.patient-view #usPipWindow {
+    display: none !important;
+  }
+
+  #usPipWindow.pip-minimized {
+    height: 2.6em !important;
+    overflow: hidden;
+  }
+
+  #usPipWindow.pip-minimized #usPipBody {
+    display: none;
+  }
+
+  #usPipTitleBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0.65em 0 0.9em;
+    height: 2.55em;
+    background: linear-gradient(90deg, rgba(18, 14, 40, 0.98), rgba(25, 18, 52, 0.98));
+    border-bottom: 1px solid rgba(124, 58, 237, 0.28);
+    cursor: grab;
+    flex-shrink: 0;
+  }
+
+  #usPipTitleBar:active {
+    cursor: grabbing;
+  }
+
+  #usPipTitleText {
+    font-size: 0.82em;
+    font-weight: 700;
+    color: #c4b5fd;
+    letter-spacing: 0.02em;
+    pointer-events: none;
+  }
+
+  .pip-title-btns {
+    display: flex;
+    gap: 0.35em;
+  }
+
+  .pip-title-btns button {
+    width: 1.8em;
+    height: 1.8em;
+    border-radius: 50%;
+    border: none;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-size: 0.82em;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0;
+    transition: opacity 0.15s;
+  }
+
+  .pip-title-btns button:hover {
+    opacity: 0.8;
+  }
+
+  #usPipMinBtn {
+    background: rgba(255, 213, 0, 0.85);
+    color: #5a4400;
+  }
+
+  #usPipCloseBtn {
+    background: rgba(255, 70, 70, 0.88);
+    color: #fff;
+  }
+
+  #consultationMinBtn {
+    background: rgba(255, 213, 0, 0.85);
+    color: #5a4400;
+    width: 1.8em;
+    height: 1.8em;
+    border-radius: 50%;
+    border: none;
+    display: none;
+    place-items: center;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.35em;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0;
+    transition: opacity 0.15s;
+  }
+
+  #consultationMinBtn:hover {
+    opacity: 0.8;
+  }
+
+  .floating-consultation-window #consultationMinBtn {
+    display: grid !important;
+  }
+
+  /* Minimized state for the floating consultation window */
+  .floating-consultation-window.consultation-minimized {
+    height: 4.45em !important;
+    min-height: 4.45em !important;
+    overflow: hidden !important;
+  }
+
+  .floating-consultation-window.consultation-minimized .consultation-feed,
+  .floating-consultation-window.consultation-minimized .consultation-bottom-bar {
+    display: none !important;
+  }
+
+  /* Completely hide main page's bottom-right self-preview in floating mode */
+  body.consultation-floating #patientCameraPanel #doctorBadge,
+  body.floating-consultation-active #patientCameraPanel #doctorBadge {
+    display: none !important;
+  }
+
+  /* Scale down self-preview badge by ~30% when inside the floating consultation window */
+  .floating-consultation-window #doctorBadge {
+    width: clamp(17em, 20vw, 21em) !important;
+    height: clamp(11.3em, 13vw, 14em) !important;
+  }
+
+  #usPipBody {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: #08090f;
+    flex-shrink: 0;
+  }
+
+  #usPipVideo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #08090f;
+    display: block;
+  }
+
+  #usPipPlaceholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+    color: rgba(180, 191, 225, 0.65);
+    font-size: 0.85em;
+    font-weight: 600;
+    pointer-events: none;
+  }
+
+  #usPipPlaceholder svg {
+    width: 2.4em;
+    height: 2.4em;
+    stroke: #7c3aed;
+  }
+
+  /* ───────────────────────────────────────────────────────────────────────── */
+
+  .consultation-doctor-tile {
+    position: absolute;
+    right: 1.05em;
+    bottom: 1.05em;
+    width: clamp(20.5em, 24vw, 26em);
+    height: clamp(12.8em, 15vw, 16em);
+    border-radius: 1em;
+    border: 0.125em solid rgba(156, 108, 255, 0.8);
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+    color: #f5f7ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.28em;
+    box-shadow: 0 0.65em 1.4em rgba(124, 58, 237, 0.34);
+    z-index: 5;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .consultation-doctor-tile:active {
+    cursor: grabbing;
+  }
+
+  .consultation-doctor-tile svg {
+    width: 1.25em;
+    height: 1.25em;
+  }
+
+  .consultation-doctor-tile .name {
+    font-size: 0.9em;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .consultation-doctor-tile .role {
+    font-size: 0.82em;
+    line-height: 1;
+    opacity: 0.9;
+  }
+
+  .consultation-bottom-bar {
+    position: absolute;
+    left: 50%;
+    bottom: 1.15em;
+    transform: translateX(-50%);
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+    padding: 0.9em 1.1em;
+    border-radius: 1em;
+    border: 0.0625em solid rgba(24, 216, 255, 0.12);
+    background: rgba(17, 20, 29, 0.96);
+    box-shadow: var(--shadow);
+  }
+
+  .consultation-action-btn {
+    width: 3.25em;
+    height: 3.25em;
+    border-radius: 50%;
+    border: 0.0625em solid rgba(24, 216, 255, 0.18);
+    background: rgba(9, 14, 25, 0.92);
+    color: #1fe4ff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow:
+      0 0.5em 1.1em rgba(0, 191, 231, 0.12),
+      inset 0 0.0625em 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .consultation-action-btn svg {
+    width: 1.45em;
+    height: 1.45em;
+    stroke-width: 2.4;
+  }
+
+  .consultation-action-btn.video {
+    color: #8b5cf6;
+    border-color: rgba(124, 58, 237, 0.34);
+    box-shadow:
+      0 0.5em 1.1em rgba(124, 58, 237, 0.14),
+      inset 0 0.0625em 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .consultation-action-btn.chat {
+    color: #9c6cff;
+    border-color: rgba(156, 108, 255, 0.32);
+    box-shadow:
+      0 0.5em 1.1em rgba(156, 108, 255, 0.14),
+      inset 0 0.0625em 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .consultation-action-btn.settings {
+    color: #20e5ff;
+    border-color: rgba(24, 216, 255, 0.2);
+  }
+
+  .consultation-action-btn.is-active.chat,
+  .consultation-action-btn.is-active.settings {
+    box-shadow:
+      0 0.6em 1.25em rgba(124, 58, 237, 0.2),
+      0 0 0 0.1em rgba(124, 58, 237, 0.32);
+  }
+
+  .consultation-action-btn.is-off {
+    color: #ff4b4b;
+    border-color: rgba(255, 75, 75, 0.36);
+    background: rgba(52, 14, 22, 0.92);
+    box-shadow:
+      0 0.5em 1.1em rgba(255, 75, 75, 0.16),
+      inset 0 0.0625em 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .consultation-action-btn .icon-off {
+    display: none;
+  }
+
+  .consultation-action-btn.is-off .icon-on {
+    display: none;
+  }
+
+  .consultation-action-btn.is-off .icon-off {
+    display: block;
+  }
+
+  .consultation-chat-panel {
+    position: absolute;
+    top: 0.95em;
+    right: 0.95em;
+    bottom: 0.95em;
+    width: min(24em, calc(100% - 2em));
+    border-radius: 1.05em;
+    border: 0.0625em solid rgba(124, 58, 237, 0.34);
+    background: linear-gradient(180deg, rgba(23, 26, 40, 0.98) 0%, rgba(20, 24, 38, 0.98) 100%);
+    box-shadow: 0 1.25em 3em rgba(0, 0, 0, 0.45);
+    z-index: 150;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(108%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.28s ease, opacity 0.22s ease;
+  }
+
+  .consultation-chat-panel.open {
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .chat-panel-header {
+    height: 4.8em;
+    padding: 0 1.2em;
+    border-bottom: 0.0625em solid rgba(124, 58, 237, 0.28);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+  }
+
+  .chat-panel-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    font-size: 1.95em;
+    font-weight: 800;
+    color: #f7f8ff;
+    line-height: 1;
+  }
+
+  .chat-panel-title i {
+    width: 0.95em;
+    height: 0.95em;
+    color: #8b2dff;
+    stroke-width: 2.4;
+  }
+
+  .chat-close-btn {
+    width: 2.6em;
+    height: 2.6em;
+    min-width: 2.6em;
+    min-height: 2.6em;
+    border-radius: 0.65em;
+    border: 0.0625em solid rgba(255, 71, 87, 0.24);
+    background: rgba(255, 71, 87, 0.14);
+    color: #ff4f4f;
+    padding: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .chat-close-btn i,
+  .chat-close-btn svg {
+    display: block;
+    width: 1.25em;
+    height: 1.25em;
+    stroke-width: 2.4;
+  }
+
+  .chat-messages {
+    flex: 1;
+    padding: 1.1em 1em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85em;
+    overflow: auto;
+  }
+
+  .chat-bubble {
+    max-width: 84%;
+    border-radius: 1em;
+    padding: 0.78em 0.9em 0.72em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    line-height: 1.35;
+    font-size: 1.15em;
+    font-weight: 600;
+  }
+
+  .chat-bubble.doctor {
+    align-self: flex-end;
+    background: rgba(82, 34, 146, 0.88);
+    border: 0.0625em solid rgba(124, 58, 237, 0.42);
+    color: #f0e7ff;
+  }
+
+  .chat-bubble.patient {
+    align-self: flex-start;
+    background: rgba(17, 79, 98, 0.78);
+    border: 0.0625em solid rgba(24, 216, 255, 0.34);
+    color: #dff7ff;
+  }
+
+  .chat-time {
+    font-size: 0.88em;
+    font-weight: 500;
+    opacity: 0.78;
+  }
+
+  .chat-input-wrap {
+    border-top: 0.0625em solid rgba(124, 58, 237, 0.24);
+    padding: 0.8em;
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+  }
+
+  .chat-input {
+    flex: 1;
+    height: 2.65em;
+    border-radius: 0.7em;
+    border: 0.0625em solid rgba(124, 58, 237, 0.36);
+    background: rgba(10, 15, 29, 0.95);
+    color: #eaf0ff;
+    font-size: 1.1em;
+    padding: 0 0.85em;
+    outline: none;
+  }
+
+  .chat-input:focus {
+    border-color: rgba(124, 58, 237, 0.62);
+    box-shadow: 0 0 0 0.14em rgba(124, 58, 237, 0.2);
+  }
+
+  .chat-send-btn {
+    width: 2.65em;
+    height: 2.65em;
+    min-width: 2.65em;
+    min-height: 2.65em;
+    border-radius: 0.7em;
+    border: 0.0625em solid rgba(124, 58, 237, 0.4);
+    background: rgba(124, 58, 237, 0.2);
+    color: #8b2dff;
+    padding: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .chat-send-btn i,
+  .chat-send-btn svg {
+    display: block;
+    width: 1.15em;
+    height: 1.15em;
+    stroke-width: 2.5;
+  }
+
+  .consultation-settings-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 200;
+    background: rgba(4, 8, 16, 0.74);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.1em;
+  }
+
+  .consultation-settings-modal.hidden {
+    display: none !important;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  .consultation-settings-modal:not(.hidden) {
+    display: flex !important;
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  .consultation-settings-content {
+    width: min(41em, 100%);
+    border-radius: 1.2em;
+    border: 0.0625em solid rgba(24, 216, 255, 0.34);
+    background:
+      radial-gradient(circle at top left, rgba(124, 58, 237, 0.08), transparent 33%),
+      radial-gradient(circle at top right, rgba(24, 216, 255, 0.1), transparent 30%),
+      linear-gradient(180deg, rgba(22, 26, 40, 0.98) 0%, rgba(16, 19, 31, 0.99) 100%);
+    box-shadow:
+      0 1.5em 4em rgba(0, 0, 0, 0.52),
+      0 0 0.8em rgba(24, 216, 255, 0.12);
+    padding: 1.75em;
+    max-height: 90%;
+    overflow: auto;
+  }
+
+  .consultation-settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+    margin-bottom: 1.25em;
+  }
+
+  .consultation-settings-header h2 {
+    margin: 0;
+    font-size: 2.25em;
+    line-height: 1;
+    font-weight: 800;
+    color: #f7f8ff;
+  }
+
+  .consultation-settings-close {
+    width: 2.8em;
+    height: 2.8em;
+    min-width: 2.8em;
+    min-height: 2.8em;
+    border-radius: 0.75em;
+    border: 0.0625em solid rgba(255, 71, 87, 0.26);
+    background: rgba(255, 71, 87, 0.14);
+    color: #ff4f4f;
+    padding: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .consultation-settings-close i,
+  .consultation-settings-close svg {
+    display: block;
+    width: 1.3em;
+    height: 1.3em;
+  }
+
+  .consultation-settings-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25em;
+  }
+
+  .consultation-settings-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+  }
+
+  .consultation-settings-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    margin: 0;
+    font-size: 1.7em;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .consultation-settings-title i {
+    width: 0.95em;
+    height: 0.95em;
+    stroke-width: 2.4;
+  }
+
+  .consultation-settings-title.audio {
+    color: #1fe4ff;
+  }
+
+  .consultation-settings-title.video {
+    color: #8b2dff;
+  }
+
+  .consultation-settings-title.general {
+    color: #d6deee;
+  }
+
+  .consultation-setting-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+  }
+
+  .consultation-setting-label {
+    color: #9ea7bb;
+    font-size: 1.3em;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .consultation-setting-select {
+    width: 100%;
+    height: 2.35em;
+    border-radius: 0.72em;
+    border: 0.0625em solid rgba(24, 216, 255, 0.42);
+    background: rgba(6, 11, 24, 0.95);
+    color: #f1f4ff;
+    font-size: 1.2em;
+    font-weight: 500;
+    padding: 0 2.15em 0 0.75em;
+    appearance: none;
+    outline: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23e3ecff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.6em center;
+    background-size: 1em;
+  }
+
+  .consultation-setting-select.video {
+    border-color: rgba(124, 58, 237, 0.62);
+  }
+
+  .consultation-setting-select:focus {
+    box-shadow: 0 0 0 0.14em rgba(24, 216, 255, 0.2);
+  }
+
+  .consultation-setting-select.video:focus {
+    box-shadow: 0 0 0 0.14em rgba(139, 92, 246, 0.22);
+  }
+
+  .consultation-setting-check {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+  }
+
+  .consultation-setting-check input {
+    width: 1.45em;
+    height: 1.45em;
+    accent-color: #15d7ff;
+    cursor: pointer;
+  }
+
+  .consultation-setting-check .brightness {
+    accent-color: #7c3aed;
+  }
+
+  .consultation-end-btn {
+    min-width: 8.5em;
+    height: 3.25em;
+    padding: 0 1.25em;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ff4b4b, #ff3434);
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45em;
+    cursor: pointer;
+    box-shadow: 0 0.65em 1.5em rgba(255, 69, 69, 0.22);
+  }
+
+  .consultation-end-btn svg {
+    width: 1.1em;
+    height: 1.1em;
+  }
+
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 8, 16, 0.72);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25em;
+    z-index: 100;
+  }
+
+  .modal.hidden {
+    display: none;
+  }
+
+  .modal-content {
+    width: min(52em, 100%);
+    max-height: min(80vh, 52em);
+    overflow: auto;
+    border-radius: 1em;
+    border: 0.0625em solid rgba(24, 216, 255, 0.18);
+    background: linear-gradient(180deg, rgba(18, 21, 31, 0.98), rgba(15, 18, 27, 0.98));
+    box-shadow: 0 2em 4.5em rgba(0, 0, 0, 0.45);
+    padding: 1em;
+  }
+
+  .modal-content.large {
+    width: min(56em, 100%);
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+    margin-bottom: 1em;
+  }
+
+  .modal-header h2 {
+    margin: 0;
+    font-size: 1.35em;
+    font-weight: 800;
+  }
+
+  .close-btn {
+    width: 2.4em;
+    height: 2.4em;
+    border-radius: 999px;
+    border: 0.0625em solid rgba(124, 58, 237, 0.5);
+    background: rgba(13, 18, 33, 0.88);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .history-list {
+    display: grid;
+    gap: 0.85em;
+  }
+
+  .history-card {
+    border-radius: 0.9em;
+    border: 0.0625em solid rgba(124, 58, 237, 0.22);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.95em;
+  }
+
+  .history-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1em;
+  }
+
+  .history-card .title {
+    margin: 0;
+    font-weight: 800;
+    font-size: 1.05em;
+  }
+
+  .history-card .date,
+  .history-card .doctor,
+  .history-card .result {
+    margin: 0.3em 0 0;
+    color: var(--text-muted);
+    font-size: 0.95em;
+    line-height: 1.45;
+  }
+
+  .history-card .status {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35em 0.75em;
+    border-radius: 999px;
+    color: var(--green);
+    border: 0.0625em solid rgba(22, 242, 156, 0.18);
+    background: rgba(22, 242, 156, 0.08);
+    font-size: 0.85em;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .collage-toast {
+    position: fixed;
+    right: 1em;
+    bottom: 1em;
+    z-index: 80;
+    padding: 0.8em 1em;
+    border-radius: 999px;
+    background: rgba(10, 14, 24, 0.95);
+    color: #f2f5ff;
+    border: 0.0625em solid rgba(24, 216, 255, 0.18);
+    box-shadow: var(--shadow);
+    opacity: 0;
+    transform: translateY(0.5em);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    font-size: 0.92em;
+    font-weight: 600;
+  }
+
+  .collage-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: rgba(5, 8, 22, 0.66);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+  }
+
+  .sidebar-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .consultation-stage .sidebar-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 22.25em;
+    z-index: 50;
+    transform: translateX(-104%);
+    transition: transform 0.26s cubic-bezier(0.2, 0.8, 0.2, 1);
+    background: linear-gradient(180deg, rgba(17, 19, 28, 0.98) 0%, rgba(10, 12, 20, 0.98) 100%);
+    border-right: 0.0625em solid rgba(106, 0, 255, 0.2);
+    box-shadow: 1.125em 0 2.75em rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .consultation-stage .sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 11;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-header {
+    height: 6.5em;
+    padding: 1.375em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 0.0625em solid rgba(106, 0, 255, 0.16);
+    flex-shrink: 0;
+  }
+
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 1.125em;
+  }
+
+  .sidebar-brand .brand-logo-wrap {
+    width: 3.5em;
+    height: 3.5em;
+    border-radius: 0.875em;
+    background: rgba(255, 255, 255, 0.98);
+    border: 0.0625em solid rgba(106, 0, 255, 0.14);
+    display: grid;
+    place-items: center;
+  }
+
+  .sidebar-brand .brand-logo-wrap svg {
+    width: 2em;
+    height: 2em;
+  }
+
+  .sidebar-brand .brand-logo-wrap img {
+    width: 2em;
+    height: 2em;
+    object-fit: contain;
+  }
+
+  .sidebar-brand .brand-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1875em;
+  }
+
+  .sidebar-brand .brand-copy strong {
+    font-size: 1.5em;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .sidebar-brand .brand-copy span {
+    font-size: 1.125em;
+    color: var(--text-muted);
+    line-height: 1.2;
+  }
+
+  .close-sidebar {
+    width: 3.5em;
+    height: 3.5em;
+    border-radius: 0.75em;
+    border: 0.0625em solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-muted);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.22s ease;
+  }
+
+  .close-sidebar i {
+    width: 1.5em;
+    height: 1.5em;
+  }
+
+  .close-sidebar:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #00e5ff;
+  }
+
+  .close-sidebar:focus {
+    outline: 0.0625em solid rgba(24, 216, 255, 0.5);
+    outline-offset: 0.125em;
+  }
+
+  .sidebar-nav {
+    padding: 1.125em;
+    display: grid;
+    gap: 0.875em;
+    flex: 1;
+  }
+
+  .sidebar-link {
+    width: 100%;
+    min-height: 4em;
+    padding: 0 1.25em;
+    border: 0.0625em solid rgba(106, 0, 255, 0.18);
+    background: rgba(15, 17, 23, 0.94);
+    border-radius: 0.875em;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    cursor: pointer;
+    text-align: left;
+    font-size: 1.25em;
+    font-weight: 700;
+    transition: all 0.22s ease;
+  }
+
+  .sidebar-link:hover,
+  .sidebar-link.active {
+    background: rgba(106, 0, 255, 0.18);
+    border-color: rgba(106, 0, 255, 0.42);
+  }
+
+  .sidebar-link.logout {
+    color: #ff6b6b;
+  }
+
+  .sidebar-link.logout:hover {
+    background: rgba(255, 107, 107, 0.1);
+    border-color: rgba(255, 107, 107, 0.3);
+  }
+
+  .sidebar-link .link-icon {
+    width: 1.5em;
+    height: 1.5em;
+  }
+
+  .sidebar-spacer {
+    flex: 1;
+  }
+
+  .sidebar-footer {
+    padding: 1.25em;
+    border-top: 0.0625em solid rgba(106, 0, 255, 0.16);
+  }
+
+  .user-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+    color: var(--text-muted);
+  }
+
+  .spinner {
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    border: 0.2em solid rgba(201, 156, 255, 0.2);
+    border-top-color: #c99cff;
+    animation: spin 0.9s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (max-width: 1100px) {
+    .patient-details-card {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .patient-header,
+    .history-btn {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+
+    .feeds-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .topbar {
+      height: auto;
+      padding: 0.75em 0.85em;
+      gap: 0.75em;
+      align-items: flex-start;
+    }
+
+    .main {
+      padding: 1.5em 2.5em 2em;
+    }
+
+    .title-wrap h1 {
+      font-size: 1.7em;
+    }
+
+    .patient-details-card {
+      padding: 1em;
+    }
+
+    .actions-row {
+      grid-template-columns: 1fr;
+    }
+
+    .btn-danger {
+      width: 100%;
+    }
+  }
+
+  /* Patient view overrides - only hide details, ultrasound panel, and generate report button */
+  body.patient-view .session-details-slot {
+    display: none !important;
+  }
+
+  body.patient-view #ultrasoundPanel {
+    display: none !important;
+  }
+
+  body.patient-view .feeds-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.patient-view #generateReportBtn {
+    display: none !important;
+  }
+
+  body.patient-view .actions-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Hide Camera and Record/Play buttons on patient camera controls in Patient view, leaving only Expand button */
+  body.patient-view #patientCameraPanel .panel-controls .control-btn:nth-child(1),
+  body.patient-view #patientCameraPanel .panel-controls .control-btn:nth-child(2) {
+    display: none !important;
+  }
+
+  /* Style overrides for active consultation overlay inside fullscreen ultrasound panel */
+  #ultrasoundPanel:fullscreen .consultation-overlay.active,
+  #ultrasoundPanel:-webkit-full-screen .consultation-overlay.active {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 2147483647 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: transparent !important;
+    pointer-events: none !important;
+  }
+
+  #ultrasoundPanel:fullscreen .consultation-stage,
+  #ultrasoundPanel:-webkit-full-screen .consultation-stage {
+    z-index: 2147483647 !important;
+    pointer-events: auto !important;
+  }
+
+  #ultrasoundPanel:fullscreen .consultation-doctor-tile,
+  #ultrasoundPanel:-webkit-full-screen .consultation-doctor-tile {
+    display: none !important;
+  }
+
+  /* Floating notification card */
+  .patient-report-card {
+    position: absolute;
+    bottom: 42px;
+    left: 16px;
+    width: 240px;
+    background: linear-gradient(145deg, rgba(23, 27, 41, 0.95), rgba(15, 23, 42, 0.95));
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(168, 85, 247, 0.45);
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 12px rgba(168, 85, 247, 0.15);
+    z-index: 99;
+    animation: slideInPatientCard 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .patient-report-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(168, 85, 247, 0.7);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 16px rgba(168, 85, 247, 0.25);
+  }
+
+  .patient-report-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 1.1em;
+    margin-bottom: 6px;
+    color: #c084fc;
+  }
+
+  .patient-report-header svg,
+  .patient-report-header i {
+    width: 16px;
+    height: 16px;
+  }
+
+  .patient-report-body {
+    font-size: 0.9em;
+    color: #cbd5e1;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+
+  .patient-report-action {
+    font-size: 0.85em;
+    color: #A855F7;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .patient-report-action svg,
+  .patient-report-action i {
+    width: 14px;
+    height: 14px;
+  }
+
+  @keyframes slideInPatientCard {
+    from {
+      transform: translateY(120px) scale(0.9);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* Premium glassmorphic Modal */
+  .patient-report-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(5, 8, 22, 0.85);
+    backdrop-filter: blur(20px);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeInOverlay 0.3s ease-out;
+  }
+
+  .patient-report-modal {
+    width: 100%;
+    max-width: 650px;
+    max-height: 90vh;
+    background: linear-gradient(135deg, rgba(23, 27, 41, 0.98), rgba(15, 23, 42, 0.98));
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(168, 85, 247, 0.15);
+    animation: scaleInModal 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    color: #f7f8ff;
+    overflow: hidden;
+    font-size: 14px;
+  }
+
+  .patient-modal-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .patient-modal-title {
+    font-size: 1.4em;
+    font-weight: 700;
+    background: linear-gradient(90deg, #A855F7, #00C8FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .patient-modal-close {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.8em;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .patient-modal-close:hover {
+    color: #ff4d4d;
+  }
+
+  .patient-modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .patient-report-section {
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    padding: 14px;
+  }
+
+  .patient-report-section h3 {
+    color: #00E5FF;
+    font-size: 1.05em;
+    margin-top: 0;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid rgba(0, 229, 255, 0.15);
+    padding-bottom: 4px;
+  }
+
+  .patient-report-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .patient-report-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .patient-report-label {
+    font-size: 0.8em;
+    color: #94a3b8;
+  }
+
+  .patient-report-value {
+    font-size: 0.95em;
+    font-weight: 600;
+    color: #f1f5f9;
+  }
+
+  .patient-text-content {
+    font-size: 0.95em;
+    color: #cbd5e1;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+
+  .patient-modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .patient-btn-primary {
+    background: linear-gradient(90deg, #7C3AED, #9333EA);
+    border: none;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .patient-btn-primary:hover {
+    box-shadow: 0 6px 16px rgba(124, 58, 237, 0.5);
+    filter: brightness(1.1);
+  }
+
+  .patient-btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .patient-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+
+  @keyframes fadeInOverlay {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scaleInModal {
+    from {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
