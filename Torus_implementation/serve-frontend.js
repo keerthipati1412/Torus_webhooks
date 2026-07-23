@@ -8,33 +8,33 @@ const HOST = '0.0.0.0';
 
 // 1. Create proxy middlewares
 const socketIoProxy = createProxyMiddleware({
-  target: 'http://localhost:5002',
+  target: 'http://127.0.0.1:5002',
   ws: true, // Upgrade for WebSockets
   changeOrigin: true,
   logLevel: 'debug'
 });
 
 const hapticWsProxy = createProxyMiddleware({
-  target: 'http://localhost:5003',
+  target: 'http://127.0.0.1:5003',
   ws: true, // Upgrade for WebSockets
   changeOrigin: true,
   logLevel: 'debug'
 });
 
 const authApiProxy = createProxyMiddleware({
-  target: 'http://localhost:5003',
+  target: 'http://127.0.0.1:5003',
   changeOrigin: true,
   logLevel: 'debug'
 });
 
 const hapticApiProxy = createProxyMiddleware({
-  target: 'http://localhost:5003',
+  target: 'http://127.0.0.1:5003',
   changeOrigin: true,
   logLevel: 'debug'
 });
 
 const generalApiProxy = createProxyMiddleware({
-  target: 'http://localhost:5002',
+  target: 'http://127.0.0.1:5002',
   changeOrigin: true,
   logLevel: 'debug'
 });
