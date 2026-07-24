@@ -6352,6 +6352,26 @@
         });
       }
 
+      async function tryPlayVideo(videoElement) {
+        if (!videoElement) return;
+        const id = videoElement.id || "unnamed";
+        try {
+          await videoElement.play();
+          sendTelemetry("video", `tryPlayVideo success: ${id}`, { muted: videoElement.muted });
+        } catch (error) {
+          console.warn("Video autoplay blocked, trying muted play:", error?.message || error);
+          sendTelemetry("video", `tryPlayVideo blocked (unmuted), trying muted: ${id}`, { error: error.message });
+          videoElement.muted = true;
+          try {
+            await videoElement.play();
+            sendTelemetry("video", `tryPlayVideo success (muted fallback): ${id}`);
+          } catch (muteError) {
+            console.error("Muted play also failed:", muteError?.message || muteError);
+            sendTelemetry("error", `tryPlayVideo failed completely: ${id}`, { error: muteError.message });
+          }
+        }
+      }
+
       // Create peer connection
       function createPeerConnection() {
         if (peerConnection) return peerConnection;
@@ -6388,20 +6408,12 @@
               if (patientVideoEl) {
                 patientVideoEl.srcObject = remoteStream;
                 patientVideoEl.muted = false;
-                patientVideoEl.play().catch(err => {
-                  console.warn('patientVideo play blocked, trying muted:', err);
-                  patientVideoEl.muted = true;
-                  patientVideoEl.play().catch(e => console.error('Muted patientVideo play failed:', e));
-                });
+                void tryPlayVideo(patientVideoEl);
               }
               if (consultationPatientVideoEl) {
                 consultationPatientVideoEl.srcObject = remoteStream;
                 consultationPatientVideoEl.muted = false;
-                consultationPatientVideoEl.play().catch(err => {
-                  console.warn('consultationPatientVideo play blocked, trying muted:', err);
-                  consultationPatientVideoEl.muted = true;
-                  consultationPatientVideoEl.play().catch(e => console.error('Muted consultationPatientVideo play failed:', e));
-                });
+                void tryPlayVideo(consultationPatientVideoEl);
               }
               // Hide patient placeholder on doctor page
               document.querySelectorAll('#patientPlaceholder').forEach(el => el.classList.add('hidden'));
@@ -6413,21 +6425,13 @@
               if (doctorTileVideoEl) {
                 doctorTileVideoEl.srcObject = remoteStream;
                 doctorTileVideoEl.muted = false;
-                doctorTileVideoEl.play().catch(err => {
-                  console.warn('doctorTileVideo play blocked, trying muted:', err);
-                  doctorTileVideoEl.muted = true;
-                  doctorTileVideoEl.play().catch(e => console.error('Muted doctorTileVideo play failed:', e));
-                });
+                void tryPlayVideo(doctorTileVideoEl);
               }
               const consultationDoctorTileVideoEl = document.getElementById('consultationDoctorTileVideo');
               if (consultationDoctorTileVideoEl) {
                 consultationDoctorTileVideoEl.srcObject = remoteStream;
                 consultationDoctorTileVideoEl.muted = false;
-                consultationDoctorTileVideoEl.play().catch(err => {
-                  console.warn('consultationDoctorTileVideo play blocked, trying muted:', err);
-                  consultationDoctorTileVideoEl.muted = true;
-                  consultationDoctorTileVideoEl.play().catch(e => console.error('Muted consultationDoctorTileVideo play failed:', e));
-                });
+                void tryPlayVideo(consultationDoctorTileVideoEl);
               }
             }
           }

@@ -986,15 +986,20 @@
       return;
     }
 
+    const id = videoElement.id || "unnamed";
     try {
       await videoElement.play();
+      sendTelemetry("video", `tryPlayVideo success: ${id}`, { muted: videoElement.muted });
     } catch (error) {
       console.warn("Video autoplay blocked, trying muted play:", error?.message || error);
+      sendTelemetry("video", `tryPlayVideo blocked (unmuted), trying muted: ${id}`, { error: error.message });
       videoElement.muted = true;
       try {
         await videoElement.play();
+        sendTelemetry("video", `tryPlayVideo success (muted fallback): ${id}`);
       } catch (muteError) {
         console.error("Muted play also failed:", muteError?.message || muteError);
+        sendTelemetry("error", `tryPlayVideo failed completely: ${id}`, { error: muteError.message });
       }
     }
   }
