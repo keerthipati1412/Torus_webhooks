@@ -1045,6 +1045,33 @@ app.post("/api/schedule", (req, res) => {
   });
 });
 
+app.get("/api/rooms", (req, res) => {
+  const rooms = {};
+  try {
+    if (io && io.sockets && io.sockets.adapter && io.sockets.adapter.rooms) {
+      for (const [roomId, room] of io.sockets.adapter.rooms.entries()) {
+        if (!io.sockets.sockets.has(roomId)) {
+          const socketIds = Array.from(room);
+          const clients = socketIds.map(sid => {
+            const sock = io.sockets.sockets.get(sid);
+            return {
+              id: sid,
+              role: sock ? (sock.data ? sock.data.role : null) : null
+            };
+          });
+          rooms[roomId] = {
+            size: room.size,
+            clients: clients
+          };
+        }
+      }
+    }
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+  res.json({ rooms });
+});
+
 app.get("/api/schedules", (req, res) => {
   const sql = "SELECT * FROM scheduled_scans ORDER BY id DESC";
   db.all(sql, [], (err, rows) => {
