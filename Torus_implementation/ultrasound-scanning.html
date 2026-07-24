@@ -5800,24 +5800,35 @@
 
       // Create and send offer
       async function createOffer() {
+        sendTelemetry('webrtc', 'createOffer started');
         if (hasCreatedOffer || !peerConnection || peerConnection.signalingState !== 'stable') {
+          sendTelemetry('webrtc', `createOffer aborted: state=${peerConnection ? peerConnection.signalingState : 'null'}`);
           return;
         }
 
         hasCreatedOffer = true;
-        const offer = await peerConnection.createOffer();
-        await peerConnection.setLocalDescription(offer);
+        try {
+          const offer = await peerConnection.createOffer();
+          await peerConnection.setLocalDescription(offer);
+          sendTelemetry('webrtc', 'setLocalDescription (offer) success');
 
-        signalingSocket.emit('offer', {
-          room: roomId,
-          roomId: roomId,
-          offer: offer
-        });
-        console.log('📤 Offer sent');
+          signalingSocket.emit('offer', {
+            room: roomId,
+            roomId: roomId,
+            offer: offer
+          });
+          console.log('📤 Offer sent');
+          sendTelemetry('webrtc', 'Offer sent over signaling');
+        } catch (e) {
+          console.error('createOffer error:', e);
+          sendTelemetry('error', `createOffer failed: ${e.message}`);
+        }
       }
 
       // Handle received offer
       async function handleOffer(payload) {
+        console.log('Offer received');
+        sendTelemetry('webrtc', 'Offer received over signaling');
         const isPcConnected = peerConnection && 
           (peerConnection.connectionState === 'connected' || peerConnection.connectionState === 'completed');
         if (peerConnection && !isPcConnected) {
@@ -5830,46 +5841,73 @@
         const pc = createPeerConnection();
         hasCreatedOffer = false;
 
-        await pc.setRemoteDescription(new RTCSessionDescription(payload));
-        const answer = await pc.createAnswer();
-        await pc.setLocalDescription(answer);
+        try {
+          await pc.setRemoteDescription(new RTCSessionDescription(payload));
+          sendTelemetry('webrtc', 'setRemoteDescription (offer) success');
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(answer);
+          sendTelemetry('webrtc', 'setLocalDescription (answer) success');
+          
+          // Flush pending ICE candidates
+          await flushPendingIceCandidates();
 
-        // Flush pending ICE candidates
-        await flushPendingIceCandidates();
-
-        signalingSocket.emit('answer', {
-          room: roomId,
-          roomId: roomId,
-          answer: answer
-        });
-        console.log('📤 Answer sent');
+          signalingSocket.emit('answer', {
+            room: roomId,
+            roomId: roomId,
+            answer: answer
+          });
+          console.log('📤 Answer sent');
+          sendTelemetry('webrtc', 'Answer sent over signaling');
+        } catch (e) {
+          console.error('handleOffer error:', e);
+          sendTelemetry('error', `handleOffer failed: ${e.message}`);
+        }
       }
 
       // Handle received answer
       async function handleAnswer(payload) {
-        if (!peerConnection) return;
-
-        await peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
-        await flushPendingIceCandidates();
-        hasCreatedOffer = false;
-        console.log('✅ Answer processed');
+        if (!peerConnection) {
+          sendTelemetry('webrtc', 'handleAnswer aborted: peerConnection is null');
+          return;
+        }
+        console.log('Answer received');
+        sendTelemetry('webrtc', 'Answer received over signaling');
+        try {
+          await peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
+          sendTelemetry('webrtc', 'setRemoteDescription (answer) success');
+          await flushPendingIceCandidates();
+          hasCreatedOffer = false;
+          console.log('✅ Answer processed');
+        } catch (e) {
+          console.error('handleAnswer error:', e);
+          sendTelemetry('error', `handleAnswer failed: ${e.message}`);
+        }
       }
 
       // Handle ICE candidate
       async function handleIceCandidate(payload) {
-        if (!peerConnection) return;
+        if (!peerConnection) {
+          sendTelemetry('webrtc', 'PeerConnection null, queueing ICE candidate');
+          const candidate = payload.candidate || payload;
+          if (candidate) pendingIceCandidates.push(candidate);
+          return;
+        }
 
         const candidate = payload.candidate || payload;
         if (!candidate) return;
+        sendTelemetry('webrtc', 'ICE candidate received over signaling');
 
         try {
           if (peerConnection.remoteDescription) {
             await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+            sendTelemetry('webrtc', 'addIceCandidate success');
           } else {
+            sendTelemetry('webrtc', 'RemoteDescription null, queueing ICE candidate');
             pendingIceCandidates.push(candidate);
           }
         } catch (error) {
           console.error('❌ ICE error:', error);
+          sendTelemetry('error', `addIceCandidate failed: ${error.message}`);
         }
       }
 
@@ -5879,12 +5917,15 @@
 
         const pending = [...pendingIceCandidates];
         pendingIceCandidates = [];
+        sendTelemetry('webrtc', `Flushing ${pending.length} pending ICE candidates`);
 
         for (const candidate of pending) {
           try {
             await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+            sendTelemetry('webrtc', 'addIceCandidate success (flushed)');
           } catch (error) {
             console.error('❌ Pending ICE error:', error);
+            sendTelemetry('error', `addIceCandidate failed (flushed): ${error.message}`);
           }
         }
       }
