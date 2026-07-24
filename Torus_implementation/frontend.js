@@ -1591,7 +1591,7 @@
     if (videoInputs.length > 1) {
       // Toggle device index based on useFrontCamera
       const selectedDevice = videoInputs[state.useFrontCamera ? 0 : 1] || videoInputs[0];
-      if (selectedDevice) {
+      if (selectedDevice && selectedDevice.deviceId) {
         console.log(`🎥 Device-Aware Selection: Using camera [${selectedDevice.label || selectedDevice.deviceId}]`);
         videoConstraint = { deviceId: { exact: selectedDevice.deviceId } };
       }

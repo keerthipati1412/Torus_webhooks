@@ -3642,11 +3642,11 @@
 
       let videoConstraint = {};
 
-      if (activeVideoDeviceId && videoInputs.some((device) => device.deviceId === activeVideoDeviceId)) {
+      if (activeVideoDeviceId && activeVideoDeviceId !== "" && videoInputs.some((device) => device.deviceId === activeVideoDeviceId)) {
         videoConstraint = { deviceId: { exact: activeVideoDeviceId } };
       } else if (videoInputs.length > 1) {
         const selectedDevice = videoInputs[useFrontCamera ? 0 : 1] || videoInputs[0];
-        if (selectedDevice) {
+        if (selectedDevice && selectedDevice.deviceId) {
           activeVideoDeviceId = selectedDevice.deviceId;
           videoConstraint = { deviceId: { exact: selectedDevice.deviceId } };
         }

@@ -4247,7 +4247,7 @@
 
             if (videoInputs.length > 1) {
               const selectedDevice = videoInputs[0];
-              if (selectedDevice) {
+              if (selectedDevice && selectedDevice.deviceId) {
                 videoConstraint = { deviceId: { exact: selectedDevice.deviceId } };
               }
             }
