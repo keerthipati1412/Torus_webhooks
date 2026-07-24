@@ -1859,15 +1859,23 @@
           console.error("Error creating offer on negotiationneeded:", err);
           sendTelemetry("error", `negotiationneeded createOffer failed: ${err.message}`);
         }
-      } else if (state.role === "patient" && state.socket && state.socket.readyState === WebSocket.OPEN) {
-        console.log("Patient requesting negotiation via ready signal");
-        sendSignal("ready", { roomId: state.roomId });
+      } else if (state.role === "patient") {
+        console.log("Patient ignored onnegotiationneeded (negotiation is managed by doctor's offer)");
+        sendTelemetry("webrtc", "Patient ignored onnegotiationneeded (no-op)");
       }
     };
 
     pc.ontrack = (event) => {
-      const remoteStream = event.streams[0];
-      state.remoteStream = remoteStream;
+      let remoteStream = event.streams[0];
+      if (!remoteStream) {
+        if (!state.remoteStream) {
+          state.remoteStream = new MediaStream();
+        }
+        state.remoteStream.addTrack(event.track);
+        remoteStream = state.remoteStream;
+      } else {
+        state.remoteStream = remoteStream;
+      }
       window.torusRemoteStream = remoteStream;
       sendTelemetry("webrtc", `ontrack: received remote track kind=${event.track.kind}`);
 

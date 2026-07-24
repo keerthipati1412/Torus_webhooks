@@ -5722,7 +5722,14 @@
         // Handle remote tracks
         peerConnection.ontrack = (event) => {
           console.log('📹 Remote track received:', event.track.kind);
-          remoteStream = event.streams[0];
+          if (!event.streams[0]) {
+            if (!remoteStream) {
+              remoteStream = new MediaStream();
+            }
+            remoteStream.addTrack(event.track);
+          } else {
+            remoteStream = event.streams[0];
+          }
           sendTelemetry('webrtc', `ontrack: received remote track kind=${event.track.kind}`);
 
           if (remoteStream) {
