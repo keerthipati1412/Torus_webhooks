@@ -429,7 +429,14 @@
       }
 
       if (data.type === "doctor-joined" || data.type === "user-joined") {
-        resetPeerConnection();
+        const isPcConnected = state.peerConnection && 
+          (state.peerConnection.connectionState === "connected" || state.peerConnection.connectionState === "completed");
+        if (!isPcConnected) {
+          console.log("Peer connection is not active, resetting peer connection for user-joined");
+          resetPeerConnection();
+        } else {
+          console.log("Peer connection is already active, ignoring user-joined reset");
+        }
         state.hasPeer = true;
         setConnectionLabel("Connected");
         setConnectionPillState(true);
@@ -440,8 +447,13 @@
           showDoctorJoinedPopup();
         }
 
-        console.log("Auto-negotiating ready signal due to user-joined event");
-        sendSignal("ready", { roomId: state.roomId });
+        if (!isPcConnected) {
+          console.log("Auto-negotiating ready signal due to user-joined event");
+          sendSignal("ready", { roomId: state.roomId });
+        } else {
+          console.log("Syncing tracks to active PeerConnection");
+          await syncTracksToPeerConnection();
+        }
         return;
       }
 
