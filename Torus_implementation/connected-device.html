@@ -6617,6 +6617,10 @@
       // Initialize WebRTC with signaling
       async function initializeWebRTC() {
         try {
+          if (typeof startConsultationSession !== 'undefined' || window.torusPeerConnection || document.querySelector('script[src*="frontend.js"]')) {
+            console.log('🚀 WebRTC is managed by frontend.js. Bypassing inline WebRTC setup.');
+            return;
+          }
           if (window.torusPeerConnection) {
             console.log('♻️ Reusing existing window.torusPeerConnection in ultrasound scanning view');
             peerConnection = window.torusPeerConnection;
