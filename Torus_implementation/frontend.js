@@ -2059,7 +2059,13 @@
     socket.on("user-left", (payload) => forward("user-left", payload));
     socket.on("offer", (payload) => forward("offer", { offer: payload }));
     socket.on("answer", (payload) => forward("answer", { answer: payload }));
-    socket.on("ice-candidate", (payload) => forward("ice-candidate", { candidate: payload?.candidate || payload }));
+    socket.on("ice-candidate", (payload) => {
+      let cand = payload;
+      if (payload && payload.candidate && typeof payload.candidate === "object") {
+        cand = payload.candidate;
+      }
+      forward("ice-candidate", { candidate: cand });
+    });
     socket.on("error-message", (payload) => forward("error-message", payload || {}));
 
     return adapter;
