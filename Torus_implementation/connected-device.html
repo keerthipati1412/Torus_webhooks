@@ -6351,6 +6351,16 @@
                   doctorTileVideoEl.play().catch(e => console.error('Muted doctorTileVideo play failed:', e));
                 });
               }
+              const consultationDoctorTileVideoEl = document.getElementById('consultationDoctorTileVideo');
+              if (consultationDoctorTileVideoEl) {
+                consultationDoctorTileVideoEl.srcObject = remoteStream;
+                consultationDoctorTileVideoEl.muted = false;
+                consultationDoctorTileVideoEl.play().catch(err => {
+                  console.warn('consultationDoctorTileVideo play blocked, trying muted:', err);
+                  consultationDoctorTileVideoEl.muted = true;
+                  consultationDoctorTileVideoEl.play().catch(e => console.error('Muted consultationDoctorTileVideo play failed:', e));
+                });
+              }
             }
           }
         };

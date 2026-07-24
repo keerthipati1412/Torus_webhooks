@@ -5692,6 +5692,12 @@
                 doctorTileVideoEl.muted = false;
                 doctorTileVideoEl.play().catch(err => console.error('Failed to play doctorTileVideo:', err));
               }
+              const consultationDoctorTileVideoEl = document.getElementById('consultationDoctorTileVideo');
+              if (consultationDoctorTileVideoEl) {
+                consultationDoctorTileVideoEl.srcObject = remoteStream;
+                consultationDoctorTileVideoEl.muted = false;
+                consultationDoctorTileVideoEl.play().catch(err => console.error('Failed to play consultationDoctorTileVideo:', err));
+              }
             }
           }
         };
