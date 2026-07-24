@@ -326,14 +326,26 @@
         const isSelf = data.success === true || !data.role;
         if (!isSelf) {
           console.log("Another peer joined via Socket.IO:", data.role);
-          resetPeerConnection();
+          const isPcConnected = state.peerConnection && 
+            (state.peerConnection.connectionState === "connected" || state.peerConnection.connectionState === "completed");
+          if (!isPcConnected) {
+            console.log("Peer connection is not active, resetting peer connection");
+            resetPeerConnection();
+          } else {
+            console.log("Peer connection is already active/connected, ignoring join-room reset");
+          }
           state.hasPeer = true;
           setConnectionLabel("Connected");
           setConnectionPillState(true);
           
           if (state.role === "doctor") {
-            console.log("Doctor starting WebRTC negotiation (peer joined)...");
-            await createOffer();
+            if (!isPcConnected) {
+              console.log("Doctor starting WebRTC negotiation (peer joined)...");
+              await createOffer();
+            } else {
+              console.log("Syncing tracks to active PeerConnection");
+              await syncTracksToPeerConnection();
+            }
           } else {
             console.log("Patient sending ready signal to doctor...");
             sendSignal("ready", { roomId: state.roomId });
@@ -483,9 +495,15 @@
 
       if (data.type === "ready") {
         if (state.role === "doctor") {
-          console.log("Doctor received ready message, resetting peer connection to negotiate fresh call...");
-          resetPeerConnection();
-          await createOffer();
+          const isPcConnected = state.peerConnection && 
+            (state.peerConnection.connectionState === "connected" || state.peerConnection.connectionState === "completed");
+          if (!isPcConnected) {
+            console.log("Doctor received ready message, peer connection is not active. Resetting and negotiating...");
+            resetPeerConnection();
+            await createOffer();
+          } else {
+            console.log("Doctor received ready message, but connection is already active. Ignoring reset.");
+          }
         }
         return;
       }
@@ -2072,8 +2090,15 @@
   }
 
   async function handleOffer(message) {
-    console.log("Offer received, resetting peer connection to prepare for handling new offer");
-    resetPeerConnection();
+    console.log("Offer received");
+    const isPcConnected = state.peerConnection && 
+      (state.peerConnection.connectionState === "connected" || state.peerConnection.connectionState === "completed");
+    if (!isPcConnected) {
+      console.log("Peer connection is not active, resetting to prepare for handling new offer");
+      resetPeerConnection();
+    } else {
+      console.log("Peer connection is already active, handling new offer on existing connection");
+    }
     const pc = ensurePeerConnection();
 
     state.hasCreatedOffer = false;

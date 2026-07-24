@@ -5748,7 +5748,9 @@
 
       // Handle received offer
       async function handleOffer(payload) {
-        if (peerConnection) {
+        const isPcConnected = peerConnection && 
+          (peerConnection.connectionState === 'connected' || peerConnection.connectionState === 'completed');
+        if (peerConnection && !isPcConnected) {
           console.log("🔄 Closing existing peer connection for new offer");
           try {
             peerConnection.close();
