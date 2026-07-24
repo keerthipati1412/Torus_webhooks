@@ -4019,18 +4019,14 @@
 
           signalingSocket.on('user-joined', async (data) => {
             console.log('👥 User joined room:', data);
-            const isPcConnected = peerConnection && 
-              (peerConnection.connectionState === 'connected' || peerConnection.connectionState === 'completed');
-            if (peerConnection && !isPcConnected) {
-              console.log('🔄 Resetting peer connection for user-joined');
+            console.log('🔄 Resetting peer connection for user-joined');
+            if (peerConnection) {
               try { peerConnection.close(); } catch(e){}
-              peerConnection = null;
             }
+            peerConnection = null;
             if (role === 'doctor') {
-              if (!isPcConnected) {
-                console.log('Doctor creating offer (user-joined)...');
-                await createOffer();
-              }
+              console.log('Doctor creating offer (user-joined)...');
+              await createOffer();
             } else {
               console.log('Patient sending ready signal (user-joined)...');
               signalingSocket.emit('ready', { room: roomId, roomId: roomId });
@@ -4039,13 +4035,9 @@
 
           signalingSocket.on('joined-room', async (data) => {
             console.log('✅ Joined room acknowledged:', data);
-            const isPcConnected = peerConnection && 
-              (peerConnection.connectionState === 'connected' || peerConnection.connectionState === 'completed');
             if (role === 'doctor') {
-              if (!isPcConnected) {
-                console.log('Doctor creating offer (joined-room)...');
-                await createOffer();
-              }
+              console.log('Doctor creating offer (joined-room)...');
+              await createOffer();
             } else {
               console.log('Patient sending ready signal (joined-room)...');
               signalingSocket.emit('ready', { room: roomId, roomId: roomId });
@@ -4055,15 +4047,13 @@
           signalingSocket.on('ready', async (data) => {
             console.log('📨 Ready signal received');
             if (role === 'doctor') {
-              const isPcConnected = peerConnection && 
-                (peerConnection.connectionState === 'connected' || peerConnection.connectionState === 'completed');
-              if (!isPcConnected) {
-                console.log('🔄 Resetting peer connection for ready signal');
+              console.log('🔄 Resetting peer connection for ready signal');
+              if (peerConnection) {
                 try { peerConnection.close(); } catch(e){}
-                peerConnection = null;
-                console.log('Doctor creating offer (ready)...');
-                await createOffer();
               }
+              peerConnection = null;
+              console.log('Doctor creating offer (ready)...');
+              await createOffer();
             }
           });
 
