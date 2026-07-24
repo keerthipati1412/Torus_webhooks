@@ -7,7 +7,25 @@
   // Prefer the local signaling server on port 5002 (matches server.js default)
   const DEFAULT_SIGNAL_SERVER = (window.location.port === '3000' || window.location.port === '') ? window.location.origin : window.location.protocol + '//' + window.location.hostname + ':5002';
   const RTC_CONFIG = {
-    iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+    iceServers: [
+      { urls: "stun:stun.l.google.com:19302" },
+      { urls: "stun:openrelay.metered.ca:80" },
+      {
+        urls: "turn:openrelay.metered.ca:80",
+        username: "openrelay",
+        credential: "openrelay"
+      },
+      {
+        urls: "turn:openrelay.metered.ca:443",
+        username: "openrelay",
+        credential: "openrelay"
+      },
+      {
+        urls: "turn:openrelay.metered.ca:443?transport=tcp",
+        username: "openrelay",
+        credential: "openrelay"
+      }
+    ]
   };
 
   let isStarted = false;
@@ -1389,9 +1407,15 @@
   }
 
   async function getCameraConstraints() {
-    const videoInputs = navigator.mediaDevices && navigator.mediaDevices.enumerateDevices
+    let videoInputs = navigator.mediaDevices && navigator.mediaDevices.enumerateDevices
       ? (await navigator.mediaDevices.enumerateDevices()).filter((device) => device.kind === "videoinput")
       : [];
+
+    // Filter out depth and infrared sensor inputs (only select RGB/Color inputs)
+    videoInputs = videoInputs.filter(device => {
+      const label = (device.label || "").toLowerCase();
+      return !label.includes("depth") && !label.includes("ir") && !label.includes("infrared");
+    });
 
     let videoConstraint = {};
 
