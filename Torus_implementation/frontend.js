@@ -1388,10 +1388,44 @@
     }
   }
 
+  async function getCameraConstraints() {
+    const videoInputs = navigator.mediaDevices && navigator.mediaDevices.enumerateDevices
+      ? (await navigator.mediaDevices.enumerateDevices()).filter((device) => device.kind === "videoinput")
+      : [];
+
+    let videoConstraint = {};
+
+    if (videoInputs.length > 1) {
+      // Toggle device index based on useFrontCamera
+      const selectedDevice = videoInputs[state.useFrontCamera ? 0 : 1] || videoInputs[0];
+      if (selectedDevice) {
+        console.log(`🎥 Device-Aware Selection: Using camera [${selectedDevice.label || selectedDevice.deviceId}]`);
+        videoConstraint = { deviceId: { exact: selectedDevice.deviceId } };
+      }
+    }
+
+    if (!videoConstraint.deviceId) {
+      // fallback to facingMode if single camera or unable to enumerate
+      videoConstraint = { facingMode: state.useFrontCamera ? "user" : "environment" };
+    }
+
+    // Add ideal resolution parameters
+    videoConstraint.width = { ideal: 1280 };
+    videoConstraint.height = { ideal: 720 };
+
+    return {
+      video: videoConstraint,
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true
+      }
+    };
+  }
+
   async function ensureLocalStream() {
     if (state.localStream) return;
 
-    // Allow test mode to skip camera (append ?test=1 to URL)
     const isTestMode = /test=1|skipCamera=true/i.test(window.location.search);
     if (isTestMode) {
       console.log("🧪 TEST MODE: Skipping camera - will connect signaling only");
@@ -1403,113 +1437,138 @@
       throw new Error("getUserMedia unsupported. Use HTTPS or localhost.");
     }
 
-    try {
-      console.log("Attempting to request full Audio + Video permissions...");
-      const constraints = {
-        video: {
-          facingMode: state.useFrontCamera ? "user" : "environment",
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
-        },
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
-        }
-      };
+    // Helper function to try loading a stream with given constraints
+    const tryGetUserMedia = async (constraints) => {
+      console.log("📷 [TRACE] navigator.mediaDevices.getUserMedia called with:", JSON.stringify(constraints));
+      return await navigator.mediaDevices.getUserMedia(constraints);
+    };
 
-      console.log("📷 [TRACE] navigator.mediaDevices.getUserMedia about to be called in frontend.js (Primary: Audio+Video)");
-      console.trace();
-      state.localStream = await navigator.mediaDevices.getUserMedia(constraints);
-      attachLocalVideo();
-    } catch (error) {
-      console.warn("Full Audio + Video request failed, trying Video-Only fallback:", error);
+    let stream = null;
+    let baseConstraints = await getCameraConstraints();
+
+    // Stage 1: Try device-specific constraints + audio
+    try {
+      stream = await tryGetUserMedia(baseConstraints);
+    } catch (err1) {
+      console.warn("Stage 1 camera request failed (device + audio):", err1);
+      
+      // Stage 2: Try device-specific constraints, Video-Only
       try {
-        console.log("📷 [TRACE] navigator.mediaDevices.getUserMedia about to be called in frontend.js (Fallback: Video-Only)");
-        console.trace();
-        state.localStream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: state.useFrontCamera ? "user" : "environment",
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          }
-        });
-        console.log("Successfully got Video-Only stream");
-        attachLocalVideo();
-      } catch (videoError) {
-        console.warn("Video-only fallback failed, trying basic video-only fallback:", videoError);
-        try {
-          console.log("📷 [TRACE] navigator.mediaDevices.getUserMedia about to be called in frontend.js (Fallback: Basic Video)");
-          console.trace();
-          state.localStream = await navigator.mediaDevices.getUserMedia({ video: true });
-          console.log("Successfully got basic video-only stream");
-          attachLocalVideo();
-        } catch (basicVideoError) {
-          console.warn("Basic video-only fallback failed, trying Audio-Only fallback:", basicVideoError);
+        stream = await tryGetUserMedia({ video: baseConstraints.video });
+      } catch (err2) {
+        console.warn("Stage 2 camera request failed (device video-only):", err2);
+
+        // Stage 3: Try device-specific without exact modifier + audio
+        if (baseConstraints.video && baseConstraints.video.deviceId && baseConstraints.video.deviceId.exact) {
+          const softVideoConstraint = { ...baseConstraints.video, deviceId: baseConstraints.video.deviceId.exact };
           try {
-            console.log("📷 [TRACE] navigator.mediaDevices.getUserMedia about to be called in frontend.js (Fallback: Audio-Only)");
-            console.trace();
-            state.localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            console.log("Successfully got Audio-Only stream");
-            attachLocalVideo();
-          } catch (audioError) {
-            console.error("All media capture attempts failed:", audioError);
-            throw audioError;
+            stream = await tryGetUserMedia({ video: softVideoConstraint, audio: baseConstraints.audio });
+          } catch (err3) {
+            console.warn("Stage 3 camera request failed (soft device + audio):", err3);
+
+            // Stage 4: Try device-specific without exact modifier, Video-Only
+            try {
+              stream = await tryGetUserMedia({ video: softVideoConstraint });
+            } catch (err4) {
+              console.warn("Stage 4 camera request failed (soft device video-only):", err4);
+            }
           }
         }
       }
     }
-    window.torusLocalStream = state.localStream;
+
+    // Fallbacks if device-specific failed completely
+    if (!stream) {
+      // Stage 5: Try generic facingMode + audio
+      try {
+        stream = await tryGetUserMedia({
+          video: { facingMode: state.useFrontCamera ? "user" : "environment" },
+          audio: true
+        });
+      } catch (err5) {
+        console.warn("Stage 5 camera request failed (facingMode + audio):", err5);
+
+        // Stage 6: Try generic facingMode, Video-Only
+        try {
+          stream = await tryGetUserMedia({
+            video: { facingMode: state.useFrontCamera ? "user" : "environment" }
+          });
+        } catch (err6) {
+          console.warn("Stage 6 camera request failed (facingMode video-only):", err6);
+
+          // Stage 7: Try basic video-only
+          try {
+            stream = await tryGetUserMedia({ video: true });
+          } catch (err7) {
+            console.warn("Stage 7 camera request failed (basic video-only):", err7);
+
+            // Stage 8: Try basic audio-only
+            try {
+              stream = await tryGetUserMedia({ audio: true });
+            } catch (err8) {
+              console.error("All media streams failed to load:", err8);
+              throw err8;
+            }
+          }
+        }
+      }
+    }
+
+    state.localStream = stream;
+    window.torusLocalStream = stream;
+    attachLocalVideo();
+
+    // Dynamically sync the tracks to an existing peer connection and trigger renegotiation
+    if (state.peerConnection) {
+      await syncTracksToPeerConnection();
+      if (state.socket && state.socket.readyState === WebSocket.OPEN && state.roomId) {
+        console.log("Notifying peer that camera stream is active and ready");
+        sendSignal("ready", { roomId: state.roomId });
+      }
+    }
   }
 
   async function switchCamera() {
-    if (!state.localStream) {
-      console.warn("No local stream to switch camera.");
-      state.useFrontCamera = !state.useFrontCamera;
-      await ensureLocalStream();
-      return;
-    }
-
     state.useFrontCamera = !state.useFrontCamera;
     console.log("Switching camera, useFrontCamera:", state.useFrontCamera);
 
-    const videoTracks = state.localStream.getVideoTracks();
-    videoTracks.forEach(track => track.stop());
-
-    try {
-      const newConstraints = {
-        video: {
-          facingMode: state.useFrontCamera ? "user" : "environment",
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
-        },
-        audio: false
-      };
-
-      console.log("📷 [TRACE] navigator.mediaDevices.getUserMedia about to be called in frontend.js (switchCamera)");
-      console.trace();
-      const tempStream = await navigator.mediaDevices.getUserMedia(newConstraints);
-      const newVideoTrack = tempStream.getVideoTracks()[0];
-
-      if (newVideoTrack) {
-        videoTracks.forEach(track => state.localStream.removeTrack(track));
-        state.localStream.addTrack(newVideoTrack);
-
-        if (state.peerConnection) {
-          const senders = state.peerConnection.getSenders();
-          const videoSender = senders.find(sender => sender.track && sender.track.kind === "video");
-          if (videoSender) {
-            await videoSender.replaceTrack(newVideoTrack);
-            console.log("Video track replaced in PeerConnection.");
+    // Stop current video tracks to release camera hardware
+    if (state.localStream) {
+      const videoTracks = state.localStream.getVideoTracks();
+      videoTracks.forEach(track => {
+        try {
+          track.stop();
+          if (state.localStream) {
+            state.localStream.removeTrack(track);
           }
+        } catch (e) {
+          console.warn("Error stopping video track:", e);
         }
+      });
+    }
 
-        attachLocalVideo();
+    // Force reloading the stream with new constraints
+    const oldStream = state.localStream;
+    state.localStream = null;
+    
+    try {
+      await ensureLocalStream();
+      
+      // If ensureLocalStream succeeded and peer connection is active, sync
+      if (state.localStream && state.peerConnection) {
+        await syncTracksToPeerConnection();
       }
     } catch (error) {
       console.error("Failed to switch camera:", error);
-      state.localStream = null;
-      await ensureLocalStream();
+      // Restore old stream if fallback failed completely
+      if (oldStream) {
+        state.localStream = oldStream;
+        window.torusLocalStream = oldStream;
+        attachLocalVideo();
+        if (state.peerConnection) {
+          await syncTracksToPeerConnection();
+        }
+      }
     }
   }
 
@@ -1542,6 +1601,34 @@
     }
   }
 
+  async function syncTracksToPeerConnection() {
+    if (!state.peerConnection || !state.localStream) return;
+    console.log("🔄 Syncing local tracks to active WebRTC PeerConnection");
+    const senders = state.peerConnection.getSenders();
+    const localTracks = state.localStream.getTracks();
+    
+    for (const track of localTracks) {
+      const sender = senders.find(s => s.track && s.track.kind === track.kind);
+      if (sender) {
+        try {
+          if (sender.track !== track) {
+            await sender.replaceTrack(track);
+            console.log(`✅ Replaced ${track.kind} track on PeerConnection`);
+          }
+        } catch (e) {
+          console.error(`❌ Error replacing ${track.kind} track:`, e);
+        }
+      } else {
+        try {
+          state.peerConnection.addTrack(track, state.localStream);
+          console.log(`✅ Added new ${track.kind} track to PeerConnection`);
+        } catch (e) {
+          console.error(`❌ Error adding ${track.kind} track:`, e);
+        }
+      }
+    }
+  }
+
   function ensurePeerConnection() {
     if (state.peerConnection) {
       return state.peerConnection;
@@ -1554,6 +1641,21 @@
         pc.addTrack(track, state.localStream);
       });
     }
+
+    pc.onnegotiationneeded = async () => {
+      console.log("WebRTC negotiation needed");
+      if (state.role === "doctor" && state.socket && state.socket.readyState === WebSocket.OPEN) {
+        try {
+          state.hasCreatedOffer = false; // Reset to allow a new offer
+          await createOffer();
+        } catch (err) {
+          console.error("Error creating offer on negotiationneeded:", err);
+        }
+      } else if (state.role === "patient" && state.socket && state.socket.readyState === WebSocket.OPEN) {
+        console.log("Patient requesting negotiation via ready signal");
+        sendSignal("ready", { roomId: state.roomId });
+      }
+    };
 
     pc.ontrack = (event) => {
       const remoteStream = event.streams[0];
@@ -2309,6 +2411,10 @@
 
   window.switchCamera = async function () {
     await switchCamera();
+  };
+
+  window.syncTracksToPeerConnection = async function () {
+    await syncTracksToPeerConnection();
   };
 
   window.toggleMute = function () {

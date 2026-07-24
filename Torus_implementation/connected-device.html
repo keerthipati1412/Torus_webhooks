@@ -5,12 +5,52 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Video Consultation</title>
+  <script>
+    (function() {
+      const view = new URLSearchParams(window.location.search).get('view') || 'connected-device';
+      document.documentElement.setAttribute('data-view', view);
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
+    /* SPA view routing via CSS attributes to prevent initial layout flash and empty scrolls */
+    html[data-view="connected-device"] #scanning-view-container,
+    html[data-view="connected-device"] #report-view-container {
+      display: none !important;
+    }
+    html[data-view="connected-device"] .topbar {
+      display: flex !important;
+    }
+    html[data-view="connected-device"] .page-container {
+      display: flex !important;
+    }
+
+    html[data-view="ultrasound-scanning"] .topbar,
+    html[data-view="ultrasound-scanning"] .page-container,
+    html[data-view="ultrasound-scanning"] #report-view-container,
+    html[data-view="ultrasound-scanning"] .sidebar,
+    html[data-view="ultrasound-scanning"] .sidebar-overlay {
+      display: none !important;
+    }
+    html[data-view="ultrasound-scanning"] #scanning-view-container {
+      display: block !important;
+    }
+
+    html[data-view="report-generation"] .topbar,
+    html[data-view="report-generation"] .page-container,
+    html[data-view="report-generation"] #scanning-view-container,
+    html[data-view="report-generation"] .sidebar,
+    html[data-view="report-generation"] .sidebar-overlay {
+      display: none !important;
+    }
+    html[data-view="report-generation"] #report-view-container {
+      display: block !important;
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -3594,26 +3634,28 @@
         ? (await navigator.mediaDevices.enumerateDevices()).filter((device) => device.kind === "videoinput")
         : [];
 
-      if (activeVideoDeviceId && videoInputs.some((device) => device.deviceId === activeVideoDeviceId)) {
-        return {
-          video: { deviceId: { exact: activeVideoDeviceId } },
-          audio: true
-        };
-      }
+      let videoConstraint = {};
 
-      if (videoInputs.length > 1) {
+      if (activeVideoDeviceId && videoInputs.some((device) => device.deviceId === activeVideoDeviceId)) {
+        videoConstraint = { deviceId: { exact: activeVideoDeviceId } };
+      } else if (videoInputs.length > 1) {
         const selectedDevice = videoInputs[useFrontCamera ? 0 : 1] || videoInputs[0];
         if (selectedDevice) {
           activeVideoDeviceId = selectedDevice.deviceId;
-          return {
-            video: { deviceId: { exact: selectedDevice.deviceId } },
-            audio: true
-          };
+          videoConstraint = { deviceId: { exact: selectedDevice.deviceId } };
         }
       }
 
+      if (!videoConstraint.deviceId) {
+        videoConstraint = { facingMode: useFrontCamera ? "user" : "environment" };
+      }
+
+      // Add ideal resolution parameters
+      videoConstraint.width = { ideal: 1280 };
+      videoConstraint.height = { ideal: 720 };
+
       return {
-        video: { facingMode: useFrontCamera ? "user" : "environment" },
+        video: videoConstraint,
         audio: true
       };
     }
@@ -3641,10 +3683,84 @@
           currentStream = null;
         }
 
-        const constraints = await getCameraConstraints();
-        console.log("📷 [TRACE] navigator.mediaDevices.getUserMedia about to be called in base startCamera");
-        console.trace();
-        currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+        const tryGetUserMedia = async (c) => {
+          console.log("📷 [TRACE] Base startCamera getUserMedia called with:", JSON.stringify(c));
+          return await navigator.mediaDevices.getUserMedia(c);
+        };
+
+        let stream = null;
+        let baseConstraints = await getCameraConstraints();
+
+        // Stage 1: Try device-specific constraints + audio
+        try {
+          stream = await tryGetUserMedia(baseConstraints);
+        } catch (err1) {
+          console.warn("Base Stage 1 camera failed (device + audio):", err1);
+          
+          // Stage 2: Try device-specific constraints, Video-Only
+          try {
+            stream = await tryGetUserMedia({ video: baseConstraints.video });
+          } catch (err2) {
+            console.warn("Base Stage 2 camera failed (device video-only):", err2);
+
+            // Stage 3: Try device-specific without exact modifier + audio
+            if (baseConstraints.video && baseConstraints.video.deviceId && baseConstraints.video.deviceId.exact) {
+              const softVideoConstraint = { ...baseConstraints.video, deviceId: baseConstraints.video.deviceId.exact };
+              try {
+                stream = await tryGetUserMedia({ video: softVideoConstraint, audio: true });
+              } catch (err3) {
+                console.warn("Base Stage 3 camera failed (soft device + audio):", err3);
+
+                // Stage 4: Try device-specific without exact modifier, Video-Only
+                try {
+                  stream = await tryGetUserMedia({ video: softVideoConstraint });
+                } catch (err4) {
+                  console.warn("Base Stage 4 camera failed (soft device video-only):", err4);
+                }
+              }
+            }
+          }
+        }
+
+        // Fallbacks if device-specific failed completely
+        if (!stream) {
+          // Stage 5: Try generic facingMode + audio
+          try {
+            stream = await tryGetUserMedia({
+              video: { facingMode: useFrontCamera ? "user" : "environment" },
+              audio: true
+            });
+          } catch (err5) {
+            console.warn("Base Stage 5 camera failed (facingMode + audio):", err5);
+
+            // Stage 6: Try generic facingMode, Video-Only
+            try {
+              stream = await tryGetUserMedia({
+                video: { facingMode: useFrontCamera ? "user" : "environment" }
+              });
+            } catch (err6) {
+              console.warn("Base Stage 6 camera failed (facingMode video-only):", err6);
+
+              // Stage 7: Try basic video-only
+              try {
+                stream = await tryGetUserMedia({ video: true });
+              } catch (err7) {
+                console.warn("Base Stage 7 camera failed (basic video-only):", err7);
+
+                // Stage 8: Try basic audio-only
+                try {
+                  stream = await tryGetUserMedia({ audio: true });
+                } catch (err8) {
+                  console.error("Base camera streams failed completely:", err8);
+                  throw err8;
+                }
+              }
+            }
+          }
+        }
+
+        currentStream = stream;
+        window.torusLocalStream = stream;
 
         const videoTrack = currentStream.getVideoTracks()[0];
         if (videoTrack && videoTrack.getSettings) {
@@ -3662,6 +3778,11 @@
         }
 
         isMuted = false;
+
+        // Dynamically sync tracks to PeerConnection if active
+        if (window.syncTracksToPeerConnection) {
+          await window.syncTracksToPeerConnection();
+        }
       } catch (error) {
         console.error("Unable to start camera:", error);
         console.warn("Camera access is unavailable; continuing without local preview.");
@@ -3670,7 +3791,41 @@
 
     async function switchCamera() {
       useFrontCamera = !useFrontCamera;
-      await startCamera();
+      console.log("Base Switching camera, useFrontCamera:", useFrontCamera);
+
+      if (currentStream) {
+        currentStream.getVideoTracks().forEach(track => {
+          try {
+            track.stop();
+            if (currentStream) {
+              currentStream.removeTrack(track);
+            }
+          } catch (e) {
+            console.warn("Error stopping video track:", e);
+          }
+        });
+      }
+
+      const oldStream = currentStream;
+      currentStream = null;
+
+      try {
+        await startCamera();
+      } catch (error) {
+        console.error("Failed to switch camera in base:", error);
+        if (oldStream) {
+          currentStream = oldStream;
+          window.torusLocalStream = oldStream;
+          const localVideo = document.getElementById("localVideo");
+          if (localVideo) {
+            localVideo.srcObject = currentStream;
+            localVideo.style.display = "block";
+          }
+          if (window.syncTracksToPeerConnection) {
+            await window.syncTracksToPeerConnection();
+          }
+        }
+      }
     }
 
     function toggleMute() {

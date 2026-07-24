@@ -7,11 +7,13 @@
 
   function navigateSPA(view, updateHistory = true) {
     console.log("SPA Navigating to view:", view);
+    document.documentElement.setAttribute('data-view', view);
     document.body.setAttribute('data-view', view);
 
     const lightThemeStyles = document.getElementById('light-theme-lock');
     if (lightThemeStyles) {
-      lightThemeStyles.disabled = (view !== 'connected-device');
+      // Keep light theme active for connected-device and report-generation, disable for ultrasound-scanning
+      lightThemeStyles.disabled = (view === 'ultrasound-scanning');
     }
 
     // Update browser URL query parameter 'view' without page reload
@@ -89,10 +91,11 @@
   const initialView = new URLSearchParams(window.location.search).get('view') || 'connected-device';
   
   const initLayoutState = () => {
+    document.documentElement.setAttribute('data-view', initialView);
     document.body.setAttribute('data-view', initialView);
     const lightThemeStyles = document.getElementById('light-theme-lock');
     if (lightThemeStyles) {
-      lightThemeStyles.disabled = (initialView !== 'connected-device');
+      lightThemeStyles.disabled = (initialView === 'ultrasound-scanning');
     }
   };
 
