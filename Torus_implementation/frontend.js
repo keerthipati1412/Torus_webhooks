@@ -12,18 +12,18 @@
       { urls: "stun:openrelay.metered.ca:80" },
       {
         urls: "turn:openrelay.metered.ca:80",
-        username: "openrelay",
-        credential: "openrelay"
+        username: "openrelayproject",
+        credential: "openrelayproject"
       },
       {
         urls: "turn:openrelay.metered.ca:443",
-        username: "openrelay",
-        credential: "openrelay"
+        username: "openrelayproject",
+        credential: "openrelayproject"
       },
       {
         urls: "turn:openrelay.metered.ca:443?transport=tcp",
-        username: "openrelay",
-        credential: "openrelay"
+        username: "openrelayproject",
+        credential: "openrelayproject"
       }
     ]
   };
@@ -764,7 +764,7 @@
         const socket = await connectToSignalServer(signalServerUrl);
         console.log(`  ✓ Connected via Socket.IO: ${signalServerUrl}`);
         state.socket = socket;
-        window.torusSocket = socket;
+        window.torusSocket = socket.rawSocket || socket;
         return;
       } catch (error) {
         console.warn(`  ✗ Socket.IO failed (${signalServerUrl}):`, error?.message);
@@ -779,7 +779,7 @@
         const socket = await connectToNativeWebSocket(signalServerUrl);
         console.log(`  ✓ Connected via WebSocket: ${signalServerUrl}`);
         state.socket = socket;
-        window.torusSocket = socket;
+        window.torusSocket = socket.rawSocket || socket;
         return;
       } catch (error) {
         console.warn(`  ✗ WebSocket failed (${signalServerUrl}):`, error?.message);
@@ -1776,6 +1776,7 @@
 
   function createSignalSocketAdapter(socket, signalServerUrl) {
     const adapter = {
+      rawSocket: socket,
       readyState: WebSocket.CONNECTING,
       onopen: null,
       onerror: null,
