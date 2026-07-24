@@ -24,6 +24,16 @@
         urls: "turn:openrelay.metered.ca:443?transport=tcp",
         username: "openrelayproject",
         credential: "openrelayproject"
+      },
+      {
+        urls: "turns:openrelay.metered.ca:443",
+        username: "openrelayproject",
+        credential: "openrelayproject"
+      },
+      {
+        urls: "turns:openrelay.metered.ca:443?transport=tcp",
+        username: "openrelayproject",
+        credential: "openrelayproject"
       }
     ]
   };
@@ -957,6 +967,97 @@
         overlayVideo.style.display = "none";
         if (patientTile) {
           patientTile.style.display = "flex";
+        }
+      }
+    }
+
+    // Sync other consultation and patient/doctor video elements
+    const patientVideo = document.getElementById("patientVideo");
+    if (patientVideo) {
+      if (state.role === "doctor") {
+        if (mainStream) {
+          if (patientVideo.srcObject !== mainStream) {
+            patientVideo.srcObject = mainStream;
+            patientVideo.muted = false;
+            void tryPlayVideo(patientVideo);
+          }
+          togglePatientPlaceholder(true);
+        } else {
+          patientVideo.srcObject = null;
+          togglePatientPlaceholder(false);
+        }
+      } else {
+        // patient local preview
+        if (overlayStream) {
+          if (patientVideo.srcObject !== overlayStream) {
+            patientVideo.srcObject = overlayStream;
+            patientVideo.muted = true;
+            void tryPlayVideo(patientVideo);
+          }
+          togglePatientPlaceholder(true);
+        } else {
+          patientVideo.srcObject = null;
+          togglePatientPlaceholder(false);
+        }
+      }
+    }
+
+    const consultationPatientVideo = document.getElementById("consultationPatientVideo");
+    if (consultationPatientVideo) {
+      if (state.role === "doctor") {
+        if (mainStream) {
+          if (consultationPatientVideo.srcObject !== mainStream) {
+            consultationPatientVideo.srcObject = mainStream;
+            consultationPatientVideo.muted = false;
+            void tryPlayVideo(consultationPatientVideo);
+          }
+          const placeholder = document.getElementById("consultationPlaceholder");
+          if (placeholder) placeholder.classList.add("hidden");
+        } else {
+          consultationPatientVideo.srcObject = null;
+          const placeholder = document.getElementById("consultationPlaceholder");
+          if (placeholder) placeholder.classList.remove("hidden");
+        }
+      } else {
+        // patient local preview
+        if (overlayStream) {
+          if (consultationPatientVideo.srcObject !== overlayStream) {
+            consultationPatientVideo.srcObject = overlayStream;
+            consultationPatientVideo.muted = true;
+            void tryPlayVideo(consultationPatientVideo);
+          }
+          const placeholder = document.getElementById("consultationPlaceholder");
+          if (placeholder) placeholder.classList.add("hidden");
+        } else {
+          consultationPatientVideo.srcObject = null;
+          const placeholder = document.getElementById("consultationPlaceholder");
+          if (placeholder) placeholder.classList.remove("hidden");
+        }
+      }
+    }
+
+    const doctorTileVideo = document.getElementById("doctorTileVideo");
+    if (doctorTileVideo) {
+      if (state.role === "patient") {
+        if (mainStream) {
+          if (doctorTileVideo.srcObject !== mainStream) {
+            doctorTileVideo.srcObject = mainStream;
+            doctorTileVideo.muted = false;
+            void tryPlayVideo(doctorTileVideo);
+          }
+        } else {
+          doctorTileVideo.srcObject = null;
+        }
+      } else {
+        // doctor local preview
+        if (overlayStream) {
+          if (doctorTileVideo.srcObject !== overlayStream) {
+            doctorTileVideo.srcObject = overlayStream;
+            doctorTileVideo.muted = true;
+            void tryPlayVideo(doctorTileVideo);
+          }
+        } else {
+          doctorTileVideo.srcObject = null;
         }
       }
     }
