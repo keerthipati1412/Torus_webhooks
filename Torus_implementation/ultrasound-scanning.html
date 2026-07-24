@@ -5511,7 +5511,25 @@
     (() => {
       // WebRTC Configuration
       const RTC_CONFIG = {
-        iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:openrelay.metered.ca:80" },
+          {
+            urls: "turn:openrelay.metered.ca:80",
+            username: "openrelayproject",
+            credential: "openrelayproject"
+          },
+          {
+            urls: "turn:openrelay.metered.ca:443",
+            username: "openrelayproject",
+            credential: "openrelayproject"
+          },
+          {
+            urls: "turn:openrelay.metered.ca:443?transport=tcp",
+            username: "openrelayproject",
+            credential: "openrelayproject"
+          }
+        ]
       };
 
       const DEFAULT_SIGNAL_SERVER = (window.location.port === '3000' || window.location.port === '') ? window.location.origin : window.location.protocol + '//' + window.location.hostname + ':5002';
@@ -5828,34 +5846,122 @@
           } else if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
             throw new Error("Camera API not supported on this origin.");
           } else {
-            try {
-              console.log("📷 [TRACE] navigator.mediaDevices.getUserMedia about to be called in ultrasound-scanning.html (Override: Video+Audio)");
-              console.trace();
-              localStream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: 'user' },
-                audio: true
+            const getCameraConstraints = async () => {
+              let videoInputs = navigator.mediaDevices && navigator.mediaDevices.enumerateDevices
+                ? (await navigator.mediaDevices.enumerateDevices()).filter((device) => device.kind === "videoinput")
+                : [];
+
+              // Filter out depth and infrared sensor inputs (only select RGB/Color inputs)
+              videoInputs = videoInputs.filter(device => {
+                const label = (device.label || "").toLowerCase();
+                return !label.includes("depth") && !label.includes("ir") && !label.includes("infrared");
               });
-            } catch (cameraErr) {
-              console.warn("Ideal video+audio failed, trying video only:", cameraErr);
-              try {
-                console.log("📷 [TRACE] navigator.mediaDevices.getUserMedia about to be called in ultrasound-scanning.html (Override: Video-Only)");
-                console.trace();
-                localStream = await navigator.mediaDevices.getUserMedia({
-                  video: { facingMode: 'user' }
-                });
-              } catch (videoOnlyErr) {
-                console.warn("Video only failed, trying basic video:", videoOnlyErr);
-                try {
-                  console.log("📷 [TRACE] navigator.mediaDevices.getUserMedia about to be called in ultrasound-scanning.html (Override: Basic Video)");
-                  console.trace();
-                  localStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                } catch (basicVideoErr) {
-                  console.warn("Basic video failed, trying audio only:", basicVideoErr);
-                  console.log("📷 [TRACE] navigator.mediaDevices.getUserMedia about to be called in ultrasound-scanning.html (Override: Audio-Only)");
-                  console.trace();
-                  localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+              let videoConstraint = {};
+
+              if (videoInputs.length > 1) {
+                const selectedDevice = videoInputs[0];
+                if (selectedDevice) {
+                  videoConstraint = { deviceId: { exact: selectedDevice.deviceId } };
                 }
               }
+
+              if (!videoConstraint.deviceId) {
+                videoConstraint = { facingMode: "user" };
+              }
+
+              // Add ideal resolution parameters
+              videoConstraint.width = { ideal: 1280 };
+              videoConstraint.height = { ideal: 720 };
+
+              return {
+                video: videoConstraint,
+                audio: true
+              };
+            };
+
+            let stream = null;
+            let baseConstraints = await getCameraConstraints();
+
+            const tryGetUserMedia = async (c) => {
+              console.log("📷 [TRACE] Override startCamera getUserMedia called with:", JSON.stringify(c));
+              return await navigator.mediaDevices.getUserMedia(c);
+            };
+
+            // Stage 1: Try device-specific constraints + audio
+            try {
+              stream = await tryGetUserMedia(baseConstraints);
+            } catch (err1) {
+              console.warn("Override Stage 1 camera failed (device + audio):", err1);
+              
+              // Stage 2: Try device-specific constraints, Video-Only
+              try {
+                stream = await tryGetUserMedia({ video: baseConstraints.video });
+              } catch (err2) {
+                console.warn("Override Stage 2 camera failed (device video-only):", err2);
+
+                // Stage 3: Try device-specific without exact modifier + audio
+                if (baseConstraints.video && baseConstraints.video.deviceId && baseConstraints.video.deviceId.exact) {
+                  const softVideoConstraint = { ...baseConstraints.video, deviceId: baseConstraints.video.deviceId.exact };
+                  try {
+                    stream = await tryGetUserMedia({ video: softVideoConstraint, audio: true });
+                  } catch (err3) {
+                    console.warn("Override Stage 3 camera failed (soft device + audio):", err3);
+
+                    // Stage 4: Try device-specific without exact modifier, Video-Only
+                    try {
+                      stream = await tryGetUserMedia({ video: softVideoConstraint });
+                    } catch (err4) {
+                      console.warn("Override Stage 4 camera failed (soft device video-only):", err4);
+                    }
+                  }
+                }
+              }
+            }
+
+            // Fallbacks if device-specific failed completely
+            if (!stream) {
+              // Stage 5: Try generic facingMode + audio
+              try {
+                stream = await tryGetUserMedia({
+                  video: { facingMode: "user" },
+                  audio: true
+                });
+              } catch (err5) {
+                console.warn("Override Stage 5 camera failed (facingMode + audio):", err5);
+
+                // Stage 6: Try generic facingMode, Video-Only
+                try {
+                  stream = await tryGetUserMedia({
+                    video: { facingMode: "user" }
+                  });
+                } catch (err6) {
+                  console.warn("Override Stage 6 camera failed (facingMode video-only):", err6);
+
+                  // Stage 7: Try basic video-only
+                  try {
+                    stream = await tryGetUserMedia({ video: true });
+                  } catch (err7) {
+                    console.warn("Override Stage 7 camera failed (basic video-only):", err7);
+
+                    // Stage 8: Try basic audio-only
+                    try {
+                      stream = await tryGetUserMedia({ audio: true });
+                    } catch (err8) {
+                      console.error("Override camera streams failed completely:", err8);
+                      throw err8;
+                    }
+                  }
+                }
+              }
+            }
+
+            localStream = stream;
+            window.torusLocalStream = stream;
+            
+            // Dynamically sync tracks to PeerConnection if active
+            if (window.syncTracksToPeerConnection) {
+              await window.syncTracksToPeerConnection();
             }
           }
 
