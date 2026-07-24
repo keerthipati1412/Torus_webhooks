@@ -5562,6 +5562,24 @@
 
       console.log(`🎥 WebRTC Handler: Room=${roomId}, Role=${role}`);
 
+      function sendTelemetry(type, message, details = null) {
+        try {
+          const payload = {
+            roomId: roomId || "unknown",
+            role: role || "unknown",
+            type,
+            message,
+            details: details ? (typeof details === "string" ? details : JSON.stringify(details)) : null
+          };
+          console.log(`[TELEMETRY] ${type}: ${message}`, details || "");
+          fetch("/api/telemetry", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          }).catch(() => {});
+        } catch (e) {}
+      }
+
       // Get video elements
       const patientVideoEl = document.getElementById('patientVideo');
       const doctorTileEl = document.getElementById('doctorBadge');
@@ -5690,12 +5708,14 @@
 
         peerConnection = new RTCPeerConnection(RTC_CONFIG);
         console.log('🔧 Peer connection created');
+        sendTelemetry('webrtc', 'RTCPeerConnection instance created');
 
         // Add local stream tracks
         if (localStream) {
           localStream.getTracks().forEach((track) => {
             peerConnection.addTrack(track, localStream);
             console.log(`✅ Added ${track.kind} track to peer connection`);
+            sendTelemetry('webrtc', `Added local track to PeerConnection: ${track.kind}`);
           });
         }
 
@@ -5703,6 +5723,7 @@
         peerConnection.ontrack = (event) => {
           console.log('📹 Remote track received:', event.track.kind);
           remoteStream = event.streams[0];
+          sendTelemetry('webrtc', `ontrack: received remote track kind=${event.track.kind}`);
 
           if (remoteStream) {
             const doctorTileVideoEl = document.getElementById('doctorTileVideo');
@@ -5748,6 +5769,7 @@
           if (!signalingSocket || !signalingSocket.connected) return;
 
           console.log('🧊 Sending ICE candidate');
+          sendTelemetry('webrtc', 'Local ICE candidate sent', { candidate: event.candidate.candidate });
           signalingSocket.emit('ice-candidate', {
             room: roomId,
             roomId: roomId,
@@ -5758,6 +5780,7 @@
         // Monitor connection state
         peerConnection.onconnectionstatechange = () => {
           console.log('🔌 Connection state:', peerConnection.connectionState);
+          sendTelemetry('webrtc', `connectionState change: ${peerConnection.connectionState}`);
           if (peerConnection.connectionState === 'connected' || peerConnection.connectionState === 'completed') {
             console.log('✅ Peer connection established');
           }
@@ -5769,6 +5792,7 @@
 
         peerConnection.oniceconnectionstatechange = () => {
           console.log('🧊 ICE connection state:', peerConnection.iceConnectionState);
+          sendTelemetry('webrtc', `iceConnectionState change: ${peerConnection.iceConnectionState}`);
         };
 
         return peerConnection;
@@ -6014,6 +6038,7 @@
                       stream = await tryGetUserMedia({ audio: true });
                     } catch (err8) {
                       console.error("Override camera streams failed completely:", err8);
+                      sendTelemetry("error", "Override camera streams failed completely", { error: err8.message });
                       throw err8;
                     }
                   }
@@ -6024,6 +6049,11 @@
             localStream = stream;
             window.torusLocalStream = stream;
             
+            try {
+              const tracks = stream.getTracks().map(t => ({ kind: t.kind, label: t.label, enabled: t.enabled }));
+              sendTelemetry("camera", "Override local stream acquired", { tracks });
+            } catch(e){}
+
             // Dynamically sync tracks to PeerConnection if active
             if (window.syncTracksToPeerConnection) {
               await window.syncTracksToPeerConnection();

@@ -67,6 +67,25 @@
     isMockStream: false
   };
 
+  function sendTelemetry(type, message, details = null) {
+    try {
+      const payload = {
+        roomId: state.roomId || "unknown",
+        role: state.role || "unknown",
+        type,
+        message,
+        details: details ? (typeof details === "string" ? details : JSON.stringify(details)) : null
+      };
+      console.log(`[TELEMETRY] ${type}: ${message}`, details || "");
+      fetch("/api/telemetry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).catch(() => {});
+    } catch (e) {}
+  }
+  window.sendTelemetry = sendTelemetry;
+
   const dom = {
     subtitle: null,
     connectionPill: null,
@@ -1684,6 +1703,7 @@
               stream = await tryGetUserMedia({ audio: true });
             } catch (err8) {
               console.error("All media streams failed to load:", err8);
+              sendTelemetry("error", "All media streams failed to load", { error: err8.message });
               throw err8;
             }
           }
@@ -1693,6 +1713,12 @@
 
     state.localStream = stream;
     window.torusLocalStream = stream;
+    
+    try {
+      const tracks = stream.getTracks().map(t => ({ kind: t.kind, label: t.label, enabled: t.enabled }));
+      sendTelemetry("camera", "Local stream acquired", { tracks });
+    } catch(e){}
+    
     attachLocalVideo();
 
     // Dynamically sync the tracks to an existing peer connection and trigger renegotiation
@@ -1813,21 +1839,25 @@
     }
 
     const pc = new RTCPeerConnection(RTC_CONFIG);
+    sendTelemetry("webrtc", "RTCPeerConnection instance created");
 
     if (state.localStream) {
       state.localStream.getTracks().forEach((track) => {
         pc.addTrack(track, state.localStream);
+        sendTelemetry("webrtc", `Added local track to PeerConnection: ${track.kind}`);
       });
     }
 
     pc.onnegotiationneeded = async () => {
       console.log("WebRTC negotiation needed");
+      sendTelemetry("webrtc", "onnegotiationneeded fired");
       if (state.role === "doctor" && state.socket && state.socket.readyState === WebSocket.OPEN) {
         try {
           state.hasCreatedOffer = false; // Reset to allow a new offer
           await createOffer();
         } catch (err) {
           console.error("Error creating offer on negotiationneeded:", err);
+          sendTelemetry("error", `negotiationneeded createOffer failed: ${err.message}`);
         }
       } else if (state.role === "patient" && state.socket && state.socket.readyState === WebSocket.OPEN) {
         console.log("Patient requesting negotiation via ready signal");
@@ -1839,6 +1869,7 @@
       const remoteStream = event.streams[0];
       state.remoteStream = remoteStream;
       window.torusRemoteStream = remoteStream;
+      sendTelemetry("webrtc", `ontrack: received remote track kind=${event.track.kind}`);
 
       const remoteVideo = document.getElementById("remoteVideo");
       if (remoteVideo) {
@@ -1880,6 +1911,7 @@
     pc.onicecandidate = (event) => {
       if (!event.candidate || !state.socket || state.socket.readyState !== WebSocket.OPEN) return;
       console.log("ICE candidate sent");
+      sendTelemetry("webrtc", "Local ICE candidate sent", { candidate: event.candidate.candidate });
       sendSignal("candidate", {
         roomId: state.roomId,
         candidate: event.candidate
@@ -1888,6 +1920,7 @@
 
     pc.onconnectionstatechange = () => {
       console.log("Connection state:", pc.connectionState);
+      sendTelemetry("webrtc", `connectionState change: ${pc.connectionState}`);
       if (pc.connectionState === "connected" || pc.connectionState === "completed") {
         console.log("✅ CONNECTED");
         setCallState(CALL_STATE.CONNECTED);
@@ -1901,6 +1934,7 @@
     };
 
     pc.oniceconnectionstatechange = () => {
+      sendTelemetry("webrtc", `iceConnectionState change: ${pc.iceConnectionState}`);
       if (pc.iceConnectionState === "connected" || pc.iceConnectionState === "completed") {
         setCallState(CALL_STATE.CONNECTED);
         return;

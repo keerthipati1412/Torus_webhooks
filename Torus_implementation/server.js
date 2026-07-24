@@ -1045,6 +1045,35 @@ app.post("/api/schedule", (req, res) => {
   });
 });
 
+app.post("/api/telemetry", (req, res) => {
+  try {
+    const { roomId, role, type, message, details } = req.body || {};
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      roomId: roomId || "unknown",
+      role: role || "unknown",
+      type: type || "log",
+      message: message || "",
+      details: details || null
+    };
+    if (!global.telemetryLogs) {
+      global.telemetryLogs = [];
+    }
+    global.telemetryLogs.push(logEntry);
+    if (global.telemetryLogs.length > 500) {
+      global.telemetryLogs.shift();
+    }
+    console.log(`[TELEMETRY] [${logEntry.role}] [${logEntry.type}] ${logEntry.message}`);
+  } catch (e) {
+    console.error("Telemetry error", e);
+  }
+  res.json({ status: "ok" });
+});
+
+app.get("/api/telemetry", (req, res) => {
+  res.json({ logs: global.telemetryLogs || [] });
+});
+
 app.get("/api/rooms", (req, res) => {
   const rooms = {};
   try {
