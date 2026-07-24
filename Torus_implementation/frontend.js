@@ -1764,6 +1764,7 @@
   function resetPeerConnection() {
     console.log("🔄 Resetting peer connection and negotiation state");
     state.hasCreatedOffer = false;
+    state.pendingIceCandidates = [];
     if (state.peerConnection) {
       try {
         state.peerConnection.ontrack = null;
