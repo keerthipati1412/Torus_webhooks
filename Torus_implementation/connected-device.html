@@ -6407,6 +6407,13 @@
 
       // Handle received offer
       async function handleOffer(payload) {
+        if (peerConnection) {
+          console.log("🔄 Closing existing peer connection for new offer");
+          try {
+            peerConnection.close();
+          } catch (e) {}
+          peerConnection = null;
+        }
         const pc = createPeerConnection();
         hasCreatedOffer = false;
 

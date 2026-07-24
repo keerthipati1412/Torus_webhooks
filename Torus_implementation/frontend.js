@@ -121,8 +121,7 @@
     state.role = (roleParam === "patient" || roleParam === "pat") ? "patient" : "doctor";
 
     const roomFromUrl = normalizeRoomId(params.get("room"));
-    const roomFromStorage = normalizeRoomId(localStorage.getItem("roomId"));
-    state.roomId = roomFromUrl || roomFromStorage || "";
+    state.roomId = roomFromUrl || "";
 
     const currentView = params.get('view') || '';
     if (currentView === 'ultrasound-scanning') {
@@ -324,6 +323,24 @@
       }
 
       if (data.type === "joined-room") {
+        const isSelf = data.success === true || !data.role;
+        if (!isSelf) {
+          console.log("Another peer joined via Socket.IO:", data.role);
+          resetPeerConnection();
+          state.hasPeer = true;
+          setConnectionLabel("Connected");
+          setConnectionPillState(true);
+          
+          if (state.role === "doctor") {
+            console.log("Doctor starting WebRTC negotiation (peer joined)...");
+            await createOffer();
+          } else {
+            console.log("Patient sending ready signal to doctor...");
+            sendSignal("ready", { roomId: state.roomId });
+          }
+          return;
+        }
+
         state.isJoined = true;
         console.log("User joined:", state.role);
         const participants = Number(data.participants || 0);
@@ -465,7 +482,9 @@
       }
 
       if (data.type === "ready") {
-        if (!state.hasCreatedOffer && state.role === "doctor") {
+        if (state.role === "doctor") {
+          console.log("Doctor received ready message, resetting peer connection to negotiate fresh call...");
+          resetPeerConnection();
           await createOffer();
         }
         return;
@@ -2053,8 +2072,9 @@
   }
 
   async function handleOffer(message) {
+    console.log("Offer received, resetting peer connection to prepare for handling new offer");
+    resetPeerConnection();
     const pc = ensurePeerConnection();
-    console.log("Offer received");
 
     state.hasCreatedOffer = false;
 
