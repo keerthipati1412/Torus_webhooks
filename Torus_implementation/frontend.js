@@ -55,6 +55,7 @@
     isJoined: false,
     hasPeer: false,
     hasCreatedOffer: false,
+    isNegotiating: false,
     hasManualSessionStart: false,
     hasShownDoctorJoinedPopup: false,
     hasClickedProceed: false,
@@ -1795,6 +1796,7 @@
   function resetPeerConnection() {
     console.log("🔄 Resetting peer connection and negotiation state");
     state.hasCreatedOffer = false;
+    state.isNegotiating = false;
     state.pendingIceCandidates = [];
     if (state.peerConnection) {
       try {
@@ -2120,6 +2122,11 @@
 
   async function createOffer() {
     sendTelemetry("webrtc", "createOffer started");
+    if (state.isNegotiating) {
+      sendTelemetry("webrtc", "createOffer aborted: negotiation lock active");
+      return;
+    }
+
     const pc = ensurePeerConnection();
 
     if (state.hasCreatedOffer) {
@@ -2132,6 +2139,7 @@
       return;
     }
 
+    state.isNegotiating = true;
     state.hasCreatedOffer = true;
 
     try {
@@ -2148,6 +2156,9 @@
     } catch (e) {
       console.error("createOffer error:", e);
       sendTelemetry("error", `createOffer failed: ${e.message}`);
+      state.hasCreatedOffer = false;
+    } finally {
+      state.isNegotiating = false;
     }
   }
 
@@ -2174,6 +2185,12 @@
   async function handleOffer(message) {
     console.log("Offer received");
     sendTelemetry("webrtc", "Offer received over signaling");
+    if (state.isNegotiating) {
+      sendTelemetry("webrtc", "handleOffer aborted: negotiation lock active");
+      return;
+    }
+
+    state.isNegotiating = true;
     const isPcConnected = state.peerConnection && 
       (state.peerConnection.connectionState === "connected" || state.peerConnection.connectionState === "completed");
     if (!isPcConnected) {
@@ -2203,6 +2220,8 @@
     } catch (e) {
       console.error("handleOffer error:", e);
       sendTelemetry("error", `handleOffer failed: ${e.message}`);
+    } finally {
+      state.isNegotiating = false;
     }
   }
 
@@ -2213,6 +2232,12 @@
     }
     console.log("Answer received");
     sendTelemetry("webrtc", "Answer received over signaling");
+    if (state.isNegotiating) {
+      sendTelemetry("webrtc", "handleAnswer aborted: negotiation lock active");
+      return;
+    }
+
+    state.isNegotiating = true;
     try {
       await state.peerConnection.setRemoteDescription(new RTCSessionDescription(message.answer));
       sendTelemetry("webrtc", "setRemoteDescription (answer) success");
@@ -2221,6 +2246,8 @@
     } catch (e) {
       console.error("handleAnswer error:", e);
       sendTelemetry("error", `handleAnswer failed: ${e.message}`);
+    } finally {
+      state.isNegotiating = false;
     }
   }
 
