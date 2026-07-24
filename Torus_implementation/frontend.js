@@ -338,7 +338,23 @@
           setConnectionLabel("Connected");
           setConnectionPillState(true);
           
+          if (state.role === "patient" && data.role === "doctor") {
+            showDoctorJoinedPopup();
+            if (dom.testingBtn && !state.hasClickedProceed) {
+              dom.testingBtn.textContent = "Doctor Joined, Please click here to begin consultation";
+              dom.testingBtn.disabled = false;
+              dom.testingBtn.classList.remove("is-waiting");
+              dom.testingBtn.classList.add("ultrasound-ready");
+            }
+          }
+          
           if (state.role === "doctor") {
+            if (dom.testingBtn && !state.doctorClickedBegin) {
+              dom.testingBtn.textContent = "Patient Joined, Please click here to begin consultation";
+              dom.testingBtn.disabled = false;
+              dom.testingBtn.classList.remove("is-waiting");
+              dom.testingBtn.classList.add("ultrasound-ready");
+            }
             if (!isPcConnected) {
               console.log("Doctor starting WebRTC negotiation (peer joined)...");
               await createOffer();
@@ -369,6 +385,7 @@
 
         if (state.role === "patient") {
           if (hasPeer) {
+            showDoctorJoinedPopup();
             if (dom.testingBtn && !state.hasClickedProceed) {
               dom.testingBtn.textContent = "Doctor Joined, Please click here to begin consultation";
               dom.testingBtn.disabled = false;
@@ -379,12 +396,26 @@
             if (dom.testingBtn) {
               dom.testingBtn.textContent = "Waiting for Doctor";
               dom.testingBtn.disabled = true;
+              dom.testingBtn.classList.add("is-waiting");
+              dom.testingBtn.classList.remove("ultrasound-ready");
             }
           }
         } else {
-          if (dom.testingBtn) {
-            dom.testingBtn.textContent = state.doctorClickedBegin ? "Ultrasound Scanning" : "Waiting for Patient";
-            dom.testingBtn.disabled = true;
+          // Doctor self-joined
+          if (hasPeer) {
+            if (dom.testingBtn && !state.doctorClickedBegin) {
+              dom.testingBtn.textContent = "Patient Joined, Please click here to begin consultation";
+              dom.testingBtn.disabled = false;
+              dom.testingBtn.classList.remove("is-waiting");
+              dom.testingBtn.classList.add("ultrasound-ready");
+            }
+          } else {
+            if (dom.testingBtn) {
+              dom.testingBtn.textContent = "Waiting for Patient";
+              dom.testingBtn.disabled = true;
+              dom.testingBtn.classList.add("is-waiting");
+              dom.testingBtn.classList.remove("ultrasound-ready");
+            }
           }
         }
         return;
